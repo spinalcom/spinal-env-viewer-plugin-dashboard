@@ -2,13 +2,13 @@
 import Vue from "vue";
 import contextManager from "./contextManager.vue";
 const ComponentCtor1 = Vue.extend(contextManager);
-const ClassName = "contextStudio";
+const ClassName = "dashboard";
 const globalType = typeof window === "undefined" ? global : window;
 const spinalSystem = globalType.spinal.spinalSystem;
 
-const PanelTitle1 = "Context Manager";
-const ButtonLabel1 = "Context Manager";
-const ButtonIcon1 = "bookmarks";
+const PanelTitle1 = "dashboard";
+const ButtonLabel1 = "dashboard";
+const ButtonIcon1 = "configuration";
 
 const classExtention = class {
   constructor(viewer, options) {
@@ -18,7 +18,7 @@ const classExtention = class {
   }
   load() {
     if (this.viewer.toolbar) {
-      this.createUI();
+                  this.createUI();
     } else {
       this.onToolbarCreatedBinded = this.onToolbarCreated.bind(this);
       this.viewer.addEventListener(
@@ -44,10 +44,10 @@ const classExtention = class {
   // This function is to create your button on viewer, it used autodesk forge api
   createUI() {
     this.panel1 = new PanelClass(this.viewer, PanelTitle1);
-    globalType.spinal.panelManager.registerPanel(this.panel1, "contextManager");
+    globalType.spinal.panelManager.registerPanel(this.panel1, ClassName);
 
     var button1 = new Autodesk.Viewing.UI.Button(ButtonLabel1);
-    globalType.spinal.panelManager.registerButton(button1, "contextManager");
+    globalType.spinal.panelManager.registerButton(button1, ClassName);
     button1.container.style.color = "red";
     var icon = button1.container.firstChild;
     icon.className = "adsk-button-icon md-icon md-icon-font md-theme-default";
@@ -58,11 +58,11 @@ const classExtention = class {
   }
   initialize() {
     var _container1 = document.createElement("div");
-    _container2.className = this.panel2.container.id + "-pannelcontainer";
-    _container2.style.height = "calc(200% - 45px)";
-    _container2.style.overflowY = "auto";
-    this.panel2.container.appendChild(_container2);
-    new ComponentCtor2().$mount(_container2);
+    _container1.className = this.panel1.container.id + "-pannelcontainer";
+    _container1.style.height = "calc(100% - 45px)";
+    _container1.style.overflowY = "auto";
+    this.panel1.container.appendChild(_container1);
+    new ComponentCtor1().$mount(_container1);
   }
 };
 export default new class {

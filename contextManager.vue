@@ -1,18 +1,15 @@
 
 <template>
-  <md-content class="contextManager">
+  <md-content class="dashboard">
 
     <md-content class='mainButtons'>
 
-      <md-button @click="onCreateContext()"
+      <md-button @click="test()"
                  class="md-icon-button">
         <md-icon>add</md-icon>
       </md-button>
 
     </md-content>
-
-    <shared-tool-bar-context></shared-tool-bar-context>
-    <context-list :contextList="contextList"></context-list>
 
   </md-content>
 </template>
@@ -23,49 +20,19 @@ var spinalSystem;
 var viewer;
 var EventBus;
 var graph;
-import contextList from "./contextList.vue";
-import sharedToolBarContext from "./sharedToolBarContext.vue";
-import { AbstractElement, BIMElement } from "spinal-models-context_studio";
+
 export default {
-  name: "contextManager",
+  name: "dashboard",
   data() {
     return {
       contextList: null,
       inc: 0
     };
   },
-  components: { contextList, sharedToolBarContext },
+  components: {},
   methods: {
-    onCreateContext: function() {
-      if (typeof graph != "undefined") {
-        let relations = ["Aggregates", "Contains"];
-        let models = [
-          { name: "Zone", type: "AbstractElement" },
-          { name: "Equipement", type: "BIMElement" },
-          { name: "Other", type: "BIMElement" }
-        ];
-        let Interactions = {
-          Zone: {
-            Zone: "Aggregates",
-            Equipement: "Aggregates",
-            Other: "Contains"
-          },
-          Equipement: {
-            Equipement: "Aggregates",
-            Other: "Contains"
-          }
-        };
-        graph
-          .getContext(
-            "ZoneManager" + this.inc++,
-            relations,
-            models,
-            Interactions
-          )
-          .then(() => {
-            this.contextList = graph.appsListByType.context;
-          });
-      }
+    test: function() {
+      console.log("test");
     },
     getEvents: function() {},
     linkToDB: function() {
@@ -75,8 +42,6 @@ export default {
           typeof globalType.spinal.contextStudio.graph != "undefined"
         ) {
           graph = globalType.spinal.contextStudio.graph;
-          if (typeof graph.appsListByType.context !== "undefined")
-            this.contextList = graph.appsListByType.context;
           clearInterval(interval);
         }
       }, 500);
@@ -93,28 +58,28 @@ export default {
 </script>
 
 <style scoped>
-.contextManager {
+.dashboard {
   height: calc(100% - 35px);
 }
 </style>
 
 <style  >
-.contextManager button.md-icon-button.md-button.md-theme-default {
+.dashboard button.md-icon-button.md-button.md-theme-default {
   min-width: 20px;
   width: 20px;
   height: 20px;
 }
 
-.contextManager .md-toolbar {
+.dashboard .md-toolbar {
   height: 20px;
   min-height: 20px;
 }
 
-.contextManager .md-title {
+.dashboard .md-title {
   font-size: 15px;
 }
 
-.contextManager .md-list,
+.dashboard .md-list,
 .md-list *,
 .md-button,
 .md-button * {
@@ -126,15 +91,15 @@ export default {
   padding-left: 0px;
 }
 
-.contextManager i.md-icon.md-icon-font.md-theme-default {
+.dashboard i.md-icon.md-icon-font.md-theme-default {
   font-size: 18px !important;
 }
 
-.contextManager span {
+.dashboard span {
   font-size: 14px;
 }
 
-.contextManager .md-ripple.md-list-item-content {
+.dashboard .md-ripple.md-list-item-content {
   min-height: 0px;
   font-size: 14px;
   box-sizing: border-box;

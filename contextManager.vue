@@ -9,30 +9,42 @@
         <md-icon>add</md-icon>
       </md-button>
 
+      <md-list>
+        <!-- <app-device v-for="dev in devicesList"
+                    :bind:="device"
+                    :bind::key="dev.id"></app-device> -->
+        <device-component :devices="devicesList"></device-component>
+      </md-list>
+
     </md-content>
 
   </md-content>
 </template>
 
 <script>
+import getInfo from "./classes/getInfo.js";
 const globalType = typeof window === "undefined" ? global : window;
 var spinalSystem;
 var viewer;
 var EventBus;
 var graph;
+var appName = "smartConnector";
+var getInformation;
+import deviceComponent from "./components/deviceComponent.vue";
 
 export default {
   name: "dashboard",
   data() {
     return {
       contextList: null,
-      inc: 0
+      inc: 0,
+      devicesList: null
     };
   },
-  components: {},
+  components: { deviceComponent },
   methods: {
     test: function() {
-      console.log("test");
+      console.log(this.devicesList);
     },
     getEvents: function() {},
     linkToDB: function() {
@@ -41,7 +53,16 @@ export default {
           typeof globalType.spinal.contextStudio != "undefined" &&
           typeof globalType.spinal.contextStudio.graph != "undefined"
         ) {
+          getInformation = new getInfo.GetInformation();
+
           graph = globalType.spinal.contextStudio.graph;
+
+          graph.getApp(appName).then(el => {
+            this.devicesList = el.startingNode.getChildrenByAppByRelation(
+              appName,
+              "hasDevice"
+            );
+          });
           clearInterval(interval);
         }
       }, 500);

@@ -1,6 +1,8 @@
 <script>
+FileSystem.debug = true;
 import Vue from "vue";
 import contextManager from "./contextManager.vue";
+
 const ComponentCtor1 = Vue.extend(contextManager);
 const ClassName = "dashboard";
 const globalType = typeof window === "undefined" ? global : window;
@@ -18,7 +20,7 @@ const classExtention = class {
   }
   load() {
     if (this.viewer.toolbar) {
-                  this.createUI();
+      this.createUI();
     } else {
       this.onToolbarCreatedBinded = this.onToolbarCreated.bind(this);
       this.viewer.addEventListener(

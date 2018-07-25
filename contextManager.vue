@@ -9,12 +9,17 @@
         <md-icon>add</md-icon>
       </md-button>
 
-      <md-list>
-        <!-- <app-device v-for="dev in devicesList"
-                    :bind:="device"
-                    :bind::key="dev.id"></app-device> -->
-        <device-component :devices="devicesList"></device-component>
+      <endpoint-global-component @select_endpoint="on_item_selected"
+                                 :deviceNode="deviceNodes"></endpoint-global-component>
+
+      <graph-component :endpointSelected="endpointSelected"></graph-component>
+
+      <!-- <md-list>
+        <device-component @itemSelected="on_item_selected"
+                          :devices="devicesList"></device-component>
       </md-list>
+
+      <p>{{item_selected}}</p> -->
 
     </md-content>
 
@@ -22,29 +27,33 @@
 </template>
 
 <script>
-import getInfo from "./classes/getInfo.js";
 const globalType = typeof window === "undefined" ? global : window;
 var spinalSystem;
 var viewer;
 var EventBus;
 var graph;
 var appName = "smartConnector";
-var getInformation;
-import deviceComponent from "./components/deviceComponent.vue";
-
+import endpointGlobalComponent from "./components/endpointGlobalComponent.vue";
+import graphComponent from "./components/graphComponent.vue";
 export default {
   name: "dashboard",
   data() {
     return {
       contextList: null,
       inc: 0,
-      devicesList: null
+      deviceNodes: null,
+      endpointSelected: null
+      // item_selected: null
     };
   },
-  components: { deviceComponent },
+  components: { endpointGlobalComponent, graphComponent },
   methods: {
     test: function() {
-      console.log(this.devicesList);
+      console.log(this.deviceNodes);
+    },
+    on_item_selected: function(item) {
+      // this.item_selected = item;
+      this.endpointSelected = item;
     },
     getEvents: function() {},
     linkToDB: function() {
@@ -53,15 +62,13 @@ export default {
           typeof globalType.spinal.contextStudio != "undefined" &&
           typeof globalType.spinal.contextStudio.graph != "undefined"
         ) {
-          getInformation = new getInfo.GetInformation();
-
           graph = globalType.spinal.contextStudio.graph;
 
           graph.getApp(appName).then(el => {
-            this.devicesList = el.startingNode.getChildrenByAppByRelation(
+            this.deviceNodes = el.startingNode.getChildrenByAppByRelation(
               appName,
               "hasDevice"
-            );
+            )[0];
           });
           clearInterval(interval);
         }

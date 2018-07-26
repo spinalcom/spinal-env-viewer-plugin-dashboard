@@ -68,7 +68,7 @@ export default {
             this.deviceNodes = el.startingNode.getChildrenByAppByRelation(
               appName,
               "hasDevice"
-            )[0];
+            )[2];
           });
           clearInterval(interval);
         }

@@ -5,12 +5,15 @@
     <md-toolbar class="md-primary">
       <h3 class="md-title"
           style="flex: 1">{{endPointGroupName}}</h3>
-      <md-button @click="test">Show</md-button>
+      <md-button @click="showHideEndpoints">{{!show ? "Show" : "Hide"}}</md-button>
     </md-toolbar>
 
-    <endpoint-component v-for="endpoint in endPointGroups"
-                        :key="endpoint._server_id"
-                        :endpoint="endpoint"></endpoint-component>
+    <div v-if="show">
+      <endpoint-component v-for="endpoint in endPointGroups"
+                          :key="endpoint._server_id"
+                          :endpointNode="endpoint"
+                          @selectEndpoint="select_endpoint"></endpoint-component>
+    </div>
 
   </md-content>
 
@@ -21,37 +24,38 @@
 var getInfo = require("../classes/getInfo.js");
 import endpointComponent from "./endpointComponent.vue";
 var getInfoInstance = new getInfo.GetInformation();
-
+var appName = "smartConnector3";
 export default {
   name: "endpointGroup",
-  component: { endpointComponent },
+  components: { endpointComponent },
   props: ["endpointGroupNode"],
   data() {
     return {
       endPointGroupName: "",
-      endPointGroups: []
+      endPointGroups: [],
+      show: true
     };
   },
   methods: {
-    test: function() {
-      console.log("endpointGroupNode", this.endpointGroupNode);
-      console.log("endPointGroupName", this.endPointGroupName);
-      console.log("endPointGroups", this.endPointGroups);
+    select_endpoint: function(endp) {
+      this.$emit("selectEndpoint", endp);
+    },
+    showHideEndpoints: function() {
+      this.show = !this.show;
     }
   },
-  watch: {
-    endpointGroupNode: function() {
-      _self = this;
-      console.log("watch executer");
-      this.endPointGroupName = this.endpointGroupNode.name.get();
-      this.endpointGroupNode
-        .getChildrenElementsByAppByRelation("smartConnector", "hasEndpoint")
-        .then(el => {
-          for (var i = 0; i < el.length; i++) {
-            _self.endPointGroups.push(getInfoInstance.getDeviceDetail(el[i]));
-          }
-        });
-    }
+  mounted() {
+    // var _self = this;
+    this.endPointGroupName = this.endpointGroupNode.name.get();
+    this.endPointGroups = this.endpointGroupNode.getChildrenByAppByRelation(
+      appName,
+      "hasEndpoint"
+    );
+    // .then(el => {
+    //   for (var i = 0; i < el.length; i++) {
+    //     _self.endPointGroups.push(getInfoInstance.getDeviceDetail(el[i]));
+    //   }
+    // });
   }
 };
 </script>

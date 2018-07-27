@@ -17,7 +17,7 @@
                             @selectEndpoint="selectEndpoint"
                             v-for="endpoint in endpoints"
                             :key="endpoint._server_id"
-                            :endpoint="endpoint"></endpoint-component>
+                            :endpointNode="endpoint"></endpoint-component>
 
       </div>
 
@@ -25,7 +25,8 @@
 
       <endpoint-group v-for="endpoint_group in endPointsGroupNodes"
                       :key="endpoint_group._server_id"
-                      :endpointGroupNode="endpoint_group"></endpoint-group>
+                      :endpointGroupNode="endpoint_group"
+                      @selectEndpoint="selectEndpoint"></endpoint-group>
 
     </div>
 
@@ -41,6 +42,7 @@ import endpointComponent from "./endpointComponent.vue";
 import endpointGroup from "./endpointGroupComponent.vue";
 
 var getInfoInstance = new getInfo.GetInformation();
+var appName = "smartConnector3";
 
 export default {
   name: "endpointGlobalComponent",
@@ -58,25 +60,25 @@ export default {
       this.$emit("select_endpoint", item);
     },
     showOrHideOther: function() {
-      console.log("endpointGroup", this.endPointsGroup);
-      console.log("deviceNode", this.deviceNode);
-      // this.showEndpoint = !this.showEndpoint;
+      this.showEndpoint = !this.showEndpoint;
     }
   },
   watch: {
     deviceNode: function() {
-      var _self = this;
+      // var _self = this;
 
-      this.deviceNode
-        .getChildrenElementsByAppByRelation("smartConnector", "hasEndpoint")
-        .then(el => {
-          for (var i = 0; i < el.length; i++) {
-            _self.endpoints.push(getInfoInstance.getDeviceDetail(el[i]));
-          }
-        });
+      this.endpoints = this.deviceNode.getChildrenByAppByRelation(
+        appName,
+        "hasEndpoint"
+      );
+      // .then(el => {
+      //   for (var i = 0; i < el.length; i++) {
+      //     _self.endpoints.push(getInfoInstance.getDeviceDetail(el[i]));
+      //   }
+      // });
 
       this.endPointsGroupNodes = this.deviceNode.getChildrenByAppByRelation(
-        "smartConnector",
+        appName,
         "hasEndpointGroup"
       );
     }
@@ -95,5 +97,6 @@ export default {
 
 .endpointContainer .md-toolbar.md-theme-default.md-primary {
   height: 40px;
+  margin-bottom: 3px;
 }
 </style>

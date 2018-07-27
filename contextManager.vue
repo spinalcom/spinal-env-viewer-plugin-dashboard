@@ -32,7 +32,7 @@ var spinalSystem;
 var viewer;
 var EventBus;
 var graph;
-var appName = "smartConnector";
+var appName = "smartConnector3";
 import endpointGlobalComponent from "./components/endpointGlobalComponent.vue";
 import graphComponent from "./components/graphComponent.vue";
 export default {
@@ -52,8 +52,8 @@ export default {
       console.log(this.deviceNodes);
     },
     on_item_selected: function(item) {
-      // this.item_selected = item;
-      this.endpointSelected = item;
+      console.log(item);
+      // this.endpointSelected = item;
     },
     getEvents: function() {},
     linkToDB: function() {

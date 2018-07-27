@@ -30,8 +30,18 @@ export default {
   name: "chartComponent",
   extends: Doughnut,
   props: ["data", "options"],
-  mounted() {
-    this.renderChart(this.data, this.options);
+  // mounted() {
+  //   console.log("data", this.data);
+  //   console.log("options", this.options);
+  //   this.renderChart(this.data, this.options);
+  // },
+  watch: {
+    data: function() {
+      this.renderChart(this.data, this.options);
+    },
+    options: function() {
+      this.renderChart(this.data, this.options);
+    }
   }
 };
 </script>

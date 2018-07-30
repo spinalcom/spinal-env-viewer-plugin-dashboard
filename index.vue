@@ -2,6 +2,7 @@
 FileSystem.debug = true;
 import Vue from "vue";
 import contextManager from "./contextManager.vue";
+// import circularMenu from ''
 
 const ComponentCtor1 = Vue.extend(contextManager);
 const ClassName = "dashboard";
@@ -48,23 +49,30 @@ const classExtention = class {
     this.panel1 = new PanelClass(this.viewer, PanelTitle1);
     globalType.spinal.panelManager.registerPanel(this.panel1, ClassName);
 
-    var button1 = new Autodesk.Viewing.UI.Button(ButtonLabel1);
-    globalType.spinal.panelManager.registerButton(button1, ClassName);
-    button1.container.style.color = "red";
-    var icon = button1.container.firstChild;
-    icon.className = "adsk-button-icon md-icon md-icon-font md-theme-default";
-    icon.innerHTML = ButtonIcon1;
-    button1.setToolTip(ButtonLabel1);
+    // var button1 = new Autodesk.Viewing.UI.Button(ButtonLabel1);
+    // globalType.spinal.panelManager.registerButton(button1, ClassName);
+    // button1.container.style.color = "red";
+    // var icon = button1.container.firstChild;
+    // icon.className = "adsk-button-icon md-icon md-icon-font md-theme-default";
+    // icon.innerHTML = ButtonIcon1;
+    // button1.setToolTip(ButtonLabel1);
 
     this.initialize();
+    spinal.circularMenu.addButton(this.openClosePanel.bind(this), "folder");
   }
   initialize() {
     var _container1 = document.createElement("div");
     _container1.className = this.panel1.container.id + "-pannelcontainer";
-    _container1.style.height = "calc(100% - 45px)";
+    _container1.style.height = "80% !important";
     _container1.style.overflowY = "auto";
     this.panel1.container.appendChild(_container1);
     new ComponentCtor1().$mount(_container1);
+  }
+
+  openClosePanel() {
+    if (this.panel1.isVisible()) {
+      this.panel1.setVisible(false);
+    } else this.panel1.setVisible(true);
   }
 };
 export default new class {

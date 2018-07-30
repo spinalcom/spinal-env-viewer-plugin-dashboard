@@ -1,29 +1,25 @@
 
 <template>
-  <md-content class="dashboard">
+  <div class="dashboard">
 
-    <md-content class='mainButtons'>
+    <md-button @click="test()"
+               class="md-icon-button">
+      <md-icon>add</md-icon>
+    </md-button>
 
-      <md-button @click="test()"
-                 class="md-icon-button">
-        <md-icon>add</md-icon>
-      </md-button>
+    <endpoint-global-component @select_endpoint="on_item_selected"
+                               :deviceNode="deviceNodes"></endpoint-global-component>
 
-      <endpoint-global-component @select_endpoint="on_item_selected"
-                                 :deviceNode="deviceNodes"></endpoint-global-component>
+    <graph-component :endpointSelected="endpointSelected"></graph-component>
 
-      <graph-component :endpointSelected="endpointSelected"></graph-component>
-
-      <!-- <md-list>
+    <!-- <md-list>
         <device-component @itemSelected="on_item_selected"
                           :devices="devicesList"></device-component>
       </md-list>
 
       <p>{{item_selected}}</p> -->
 
-    </md-content>
-
-  </md-content>
+  </div>
 </template>
 
 <script>
@@ -52,8 +48,7 @@ export default {
       console.log(this.deviceNodes);
     },
     on_item_selected: function(item) {
-      console.log(item);
-      // this.endpointSelected = item;
+      this.endpointSelected = item;
     },
     getEvents: function() {},
     linkToDB: function() {
@@ -65,6 +60,8 @@ export default {
           graph = globalType.spinal.contextStudio.graph;
 
           graph.getApp(appName).then(el => {
+            console.log(el);
+            // if (typeof el.startingNode != "undefined")
             this.deviceNodes = el.startingNode.getChildrenByAppByRelation(
               appName,
               "hasDevice"
@@ -89,10 +86,24 @@ export default {
 .dashboard {
   height: calc(100% - 35px);
 }
+
+dashboard .md-icon-button {
+  width: 100%;
+  height: 20px;
+}
+
+/* .dashboard .md-toolbar {
+  height: 20px;
+  min-height: 20px;
+}
+
+.dashboard .md-title {
+  font-size: 15px;
+} */
 </style>
 
-<style  >
-.dashboard button.md-icon-button.md-button.md-theme-default {
+<style>
+/* .dashboard button.md-icon-button.md-button.md-theme-default {
   min-width: 20px;
   width: 20px;
   height: 20px;
@@ -137,5 +148,5 @@ export default {
   min-height: 0px;
   font-size: 14px;
   box-sizing: border-box;
-}
+} */
 </style>

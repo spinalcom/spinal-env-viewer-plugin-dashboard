@@ -2,7 +2,7 @@
 
   <md-content>
 
-    <md-toolbar class="md-primary">
+    <md-toolbar class="md-dense md-primary">
       <h3 class="md-title"
           style="flex: 1">{{endPointGroupName}}</h3>
       <md-button @click="showHideEndpoints">{{!show ? "Show" : "Hide"}}</md-button>

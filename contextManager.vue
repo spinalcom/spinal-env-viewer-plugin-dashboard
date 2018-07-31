@@ -60,8 +60,6 @@ export default {
           graph = globalType.spinal.contextStudio.graph;
 
           graph.getApp(appName).then(el => {
-            console.log(el);
-            // if (typeof el.startingNode != "undefined")
             this.deviceNodes = el.startingNode.getChildrenByAppByRelation(
               appName,
               "hasDevice"
@@ -92,21 +90,8 @@ dashboard .md-icon-button {
   height: 20px;
 }
 
-/* .dashboard .md-toolbar {
-  height: 20px;
-  min-height: 20px;
-}
-
-.dashboard .md-title {
-  font-size: 15px;
-} */
-</style>
-
-<style>
-/* .dashboard button.md-icon-button.md-button.md-theme-default {
-  min-width: 20px;
-  width: 20px;
-  height: 20px;
+.md-toolbar.md-dense {
+  min-height: 30px !important;
 }
 
 .dashboard .md-toolbar {
@@ -117,36 +102,4 @@ dashboard .md-icon-button {
 .dashboard .md-title {
   font-size: 15px;
 }
-
-.dashboard .md-list,
-.md-list *,
-.md-button,
-.md-button * {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  padding-right: 0px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 0px;
-}
-
-.dashboard i.md-icon.md-icon-font.md-theme-default {
-  font-size: 18px !important;
-}
-
-.dashboard span {
-  font-size: 14px;
-}
-
-.dashboard .md-ripple.md-list-item-content {
-  min-height: 0px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-.small-menu * {
-  min-height: 0px;
-  font-size: 14px;
-  box-sizing: border-box;
-} */
 </style>

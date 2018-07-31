@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     openEndPointPanel: function(device) {
-      // globalType.spinal.eventBus.$emit("testMessage", device);
       this.$emit("itemSelected", device);
     }
   },

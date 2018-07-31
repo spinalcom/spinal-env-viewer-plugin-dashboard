@@ -8,11 +8,11 @@ export default {
   name: "lineChartComponent",
   extends: Line,
   props: ["data", "options"],
-  // mounted() {
-  //   console.log("data", this.data);
-  //   console.log("options", this.options);
-  //   this.renderChart(this.data, this.options);
-  // },
+  mounted() {
+    if (this.data && this.options) {
+      this.renderChart(this.data, this.options);
+    }
+  },
   watch: {
     data: function() {
       this.renderChart(this.data, this.options);
@@ -27,7 +27,7 @@ export default {
 
 <style>
 canvas#line-chart {
+  width: 100%;
   height: 100% !important;
-  background: green;
 }
 </style>

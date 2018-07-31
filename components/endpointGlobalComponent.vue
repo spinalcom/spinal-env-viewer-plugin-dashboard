@@ -1,6 +1,6 @@
 <template>
 
-  <div class="endpointContainer">
+  <md-content class="endpointContainer md-scrollbar">
 
     <!--*********************************************************** Debut Others *****************************************************************************-->
     <div v-if="endpoints.length > 0">
@@ -24,9 +24,7 @@
                     :key="endpoint_group._server_id"
                     :endpointGroupNode="endpoint_group"
                     @selectEndpoint="selectEndpoint"></endpoint-group>
-
-  </div>
-
+  </md-content>
 </template>
 
 
@@ -60,19 +58,12 @@ export default {
   },
   watch: {
     deviceNode: function(newDeviceNode) {
-      console.log("device node watch");
-
       // var _self = this;
       if (typeof newDeviceNode != "undefined") {
         this.endpoints = this.deviceNode.getChildrenByAppByRelation(
           appName,
           "hasEndpoint"
         );
-        // .then(el => {
-        //   for (var i = 0; i < el.length; i++) {
-        //     _self.endpoints.push(getInfoInstance.getDeviceDetail(el[i]));
-        //   }
-        // });
 
         this.endPointsGroupNodes = this.deviceNode.getChildrenByAppByRelation(
           appName,
@@ -95,9 +86,14 @@ export default {
   border-bottom: 1px solid gray;
 }
 
-.endpointContainer .md-toolbar.md-theme-default.md-primary {
-  height: 20px !important;
+.endpointContainer .md-toolbar.md-dense.md-primary.md-theme-default {
+  min-height: 30px !important;
   margin-bottom: 3px;
-  font-size: 15px;
+  font-size: 13px;
+  text-transform: capitalize;
 }
+
+/* .md-dense.md-primary {
+  min-height: 30px !important;
+} */
 </style>

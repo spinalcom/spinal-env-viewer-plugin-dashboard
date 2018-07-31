@@ -5,7 +5,7 @@
     </div>
 
     <div class="chart">
-      <line-chart-component id="line"
+      <line-chart-component style="width : calc(100% - 10px); height : 100%"
                             :data="chartData"
                             :options="chartOptions"></line-chart-component>
     </div>
@@ -38,15 +38,12 @@ export default {
   },
   watch: {
     endpointSelected: function() {
-      console.log("enddpoint changed");
       var _self = this;
       this.endpointSelected
         .getRelationsByAppNameByType("smartConnector3", "hasHistory")[0]
         .getNodeList2()[0]
         .getElement()
         .then(el => {
-          console.log("el", el);
-
           _self.chartData = {
             labels: [],
             datasets: [
@@ -63,8 +60,15 @@ export default {
           }
 
           _self.chartOptions = {
-            responsive: false,
-            maintainAspectRatio: false
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [
+                {
+                  stacked: true
+                }
+              ]
+            }
           };
         });
     }
@@ -81,13 +85,15 @@ export default {
 
 .graph .title {
   width: 100%;
-  height: 30%;
+  height: 20%;
   font-size: 16px;
+  text-align: center;
 }
 
 .graph .chart {
   width: 100% !important;
-  height: calc(100% - 30% - 15px) !important;
+  height: calc(100% - 20% - 15px) !important;
+  padding: 5px;
 }
 </style>
 

@@ -1,15 +1,69 @@
 <template>
 
   <md-content class="endpointContent"
-              @click="selectEndpoint(endpointNode)">
+              @mouseover="hoverEndpoint"
+              @mouseleave="mouseLeaveEndpoint">
 
-    <!-- <div class="endpoint_name">
+    <!-- <div v-if="endpoint"
+         class="endpoint_name">
       {{endpoint.name}}
     </div> -->
 
-    <div class="endpoint_doughnut">
+    <!-- ***************************************************** Autre Type ******************************************************************************* -->
+
+    <div v-if="endpoint && endpoint.type == 'number' && !mouseOver"
+         class="endpoint_doughnut">
       <chart-component :data="chartData"
                        :options="chartOptions"></chart-component>
+    </div>
+
+    <!-- ***************************************************** Type String ******************************************************************************* -->
+
+    <div v-if="endpoint && endpoint.type == 'string' && !mouseOver"
+         class="endpoint_string">
+      <div class="name">
+        <div class="name">
+          {{endpoint.name}}
+        </div>
+      </div>
+      <div class="value">
+        {{endpoint.currentValue}}
+      </div>
+    </div>
+
+    <!-- ***************************************************** Type Boolean ******************************************************************************* -->
+    <div v-if="endpoint && endpoint.type == 'boolean' && !mouseOver"
+         class="endpoint_boolean">
+      <div class="name">
+        {{endpoint.name}}
+      </div>
+      <div class="value">
+        {{endpoint.currentValue ? "1" : "0"}}
+      </div>
+    </div>
+
+    <!-- ***************************************************** Mouse Over ******************************************************************************* -->
+
+    <div v-if="endpoint && mouseOver"
+         class="endpoint_boolean">
+      <div class="name">
+        {{endpoint.name}}
+      </div>
+      <div class="value">
+
+        <md-button title="edit"
+                   class="md-icon-button md-dense"
+                   @click="editEndpoint">
+          <md-icon>edit</md-icon>
+        </md-button>
+
+        <md-button title="show chart"
+                   class="md-icon-button md-dense"
+                   @click="selectEndpoint">
+          <md-icon>show_chart</md-icon>
+        </md-button>
+
+      </div>
     </div>
 
   </md-content>
@@ -31,12 +85,16 @@ export default {
     return {
       endpoint: null,
       chartData: null,
-      chartOptions: null
+      chartOptions: null,
+      mouseOver: false
     };
   },
   methods: {
     selectEndpoint: function() {
       this.$emit("selectEndpoint", this.endpointNode);
+    },
+    editEndpoint: function() {
+      console.log("hello world");
     },
     getEndpoints: function() {
       var _self = this;
@@ -88,34 +146,38 @@ export default {
           name: _self.endpoint.currentValue + _self.endpoint.unit
         };
       });
+    },
+    hoverEndpoint: function() {
+      this.mouseOver = true;
+    },
+    mouseLeaveEndpoint: function() {
+      this.mouseOver = false;
     }
   },
   mounted() {
     if (this.endpointNode) {
       this.getEndpoints();
     }
+  },
+  watch: {
+    endpointNode: function() {
+      this.getEndpoints();
+    }
   }
-  // watch: {
-  //   endpointNode: function() {
-  //     console.log("watch");
-  //     console.log("watch", this.endpointNode);
-  //     this.getEndpoints();
-  //   }
-  // }
 };
 </script>
 
 <style lang="scss" scoped>
 .md-content .endpointContent {
   width: 75px;
-  min-height: 75px;
+  min-height: 100px;
   display: inline-block;
   justify-content: center;
   margin-right: 5px;
   padding: 5px;
   margin-top: 10px;
   margin-bottom: 10px;
-  // align-items: center;
+  background: #242424;
 }
 
 .md-content .endpointContent:hover {
@@ -128,13 +190,52 @@ export default {
   height: 20%;
   text-align: center;
   padding-top: 5px;
-  font-size: 1.5em;
+  font-size: 1em;
   text-transform: capitalize;
 }
 
 .md-content .endpointContent .endpoint_doughnut {
   width: 100%;
-  height: 75%;
+  height: 100%;
   display: block;
+}
+
+.md-content .endpointContent .endpoint_string,
+.md-content .endpointContent .endpoint_boolean {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.md-content .endpointContent .endpoint_string .name,
+.md-content .endpointContent .endpoint_boolean .name {
+  width: 100%;
+  height: 20%;
+  text-align: "center";
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.md-content .endpointContent .endpoint_string .value {
+  width: 100%;
+  height: 80%;
+  font-size: 12px;
+  color: #f87979;
+  align-items: center;
+  padding-top: 8px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.md-content .endpointContent .endpoint_boolean .value {
+  width: 100%;
+  height: 70%;
+  font-size: 12px;
+  color: #f87979;
+  align-items: center;
+  padding-top: 8px;
+  text-align: center;
+  text-transform: uppercase;
 }
 </style>

@@ -8,7 +8,8 @@
     </md-button>
 
     <endpoint-global-component @select_endpoint="on_item_selected"
-                               :deviceNode="deviceNodes"></endpoint-global-component>
+                               :deviceNode="deviceNodes"
+                               :appName="appName"></endpoint-global-component>
 
     <graph-component :endpointSelected="endpointSelected"></graph-component>
 
@@ -28,7 +29,8 @@ var spinalSystem;
 var viewer;
 var EventBus;
 var graph;
-var appName = "smartConnector3";
+// var appName = "smartConnector3";
+
 import endpointGlobalComponent from "./components/endpointGlobalComponent.vue";
 import graphComponent from "./components/graphComponent.vue";
 export default {
@@ -38,6 +40,7 @@ export default {
       contextList: null,
       inc: 0,
       deviceNodes: null,
+      appName: null,
       endpointSelected: null
       // item_selected: null
     };
@@ -50,7 +53,13 @@ export default {
     on_item_selected: function(item) {
       this.endpointSelected = item;
     },
-    getEvents: function() {},
+    getEvents: function() {
+      var _self = this;
+      EventBus.$on("nodeContext", el => {
+        _self.appName = el.context.name.get();
+        _self.deviceNodes = el.node;
+      });
+    },
     linkToDB: function() {
       let interval = setInterval(() => {
         if (
@@ -59,12 +68,14 @@ export default {
         ) {
           graph = globalType.spinal.contextStudio.graph;
 
-          graph.getApp(appName).then(el => {
-            this.deviceNodes = el.startingNode.getChildrenByAppByRelation(
-              appName,
-              "hasDevice"
-            )[2];
-          });
+          // graph.getApp(appName).then(el => {
+          //   if (typeof el.startingNode != "undefined") {
+          //     this.deviceNodes = el.startingNode.getChildrenByAppByRelation(
+          //       appName,
+          //       "hasDevice"
+          //     )[2];
+          //   }
+          // });
           clearInterval(interval);
         }
       }, 500);

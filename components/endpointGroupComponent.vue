@@ -12,7 +12,8 @@
       <endpoint-component v-for="endpoint in endPointGroups"
                           :key="endpoint._server_id"
                           :endpointNode="endpoint"
-                          @selectEndpoint="select_endpoint"></endpoint-component>
+                          @selectEndpoint="select_endpoint"
+                          :appName="appName"></endpoint-component>
     </div>
 
   </md-content>
@@ -24,11 +25,11 @@
 var getInfo = require("../classes/getInfo.js");
 import endpointComponent from "./endpointComponent.vue";
 var getInfoInstance = new getInfo.GetInformation();
-var appName = "smartConnector3";
+// var appName = "smartConnector";
 export default {
   name: "endpointGroup",
   components: { endpointComponent },
-  props: ["endpointGroupNode"],
+  props: ["endpointGroupNode", "appName"],
   data() {
     return {
       endPointGroupName: "",
@@ -46,16 +47,32 @@ export default {
   },
   mounted() {
     // var _self = this;
-    this.endPointGroupName = this.endpointGroupNode.name.get();
-    this.endPointGroups = this.endpointGroupNode.getChildrenByAppByRelation(
-      appName,
-      "hasEndpoint"
-    );
+    if (this.endpointGroupNode) {
+      this.endPointGroupName = this.endpointGroupNode.name.get();
+      this.endPointGroups = this.endpointGroupNode.getChildrenByAppByRelation(
+        this.appName,
+        "hasEndpoint"
+      );
+    }
     // .then(el => {
     //   for (var i = 0; i < el.length; i++) {
     //     _self.endPointGroups.push(getInfoInstance.getDeviceDetail(el[i]));
     //   }
     // });
+  },
+  watch: {
+    endpointGroupNode: function() {
+      console.log(
+        "endpointNodeChangedInEndpointGroupComponent",
+        this.endpointNode
+      );
+
+      this.endPointGroupName = this.endpointGroupNode.name.get();
+      this.endPointGroups = this.endpointGroupNode.getChildrenByAppByRelation(
+        this.appName,
+        "hasEndpoint"
+      );
+    }
   }
 };
 </script>

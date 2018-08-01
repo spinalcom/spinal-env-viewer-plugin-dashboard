@@ -14,13 +14,13 @@
 
 
 <script>
-var appName = "smartConnector3";
+// var appName = "smartConnector";
 import lineChartComponent from "./lineChartComponent.vue";
 
 export default {
   name: "graphComponent",
   components: { lineChartComponent },
-  props: ["endpointSelected"],
+  props: ["endpointSelected", "appName"],
   data() {
     return {
       chartData: null,
@@ -40,7 +40,7 @@ export default {
     endpointSelected: function() {
       var _self = this;
       this.endpointSelected
-        .getRelationsByAppNameByType("smartConnector3", "hasHistory")[0]
+        .getRelationsByAppNameByType(this.appName, "hasHistory")[0]
         .getNodeList2()[0]
         .getElement()
         .then(el => {

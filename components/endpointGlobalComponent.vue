@@ -23,7 +23,8 @@
     <endpoint-group v-for="endpoint_group in endPointsGroupNodes"
                     :key="endpoint_group._server_id"
                     :endpointGroupNode="endpoint_group"
-                    @selectEndpoint="selectEndpoint"></endpoint-group>
+                    @selectEndpoint="selectEndpoint"
+                    :appName="appName"></endpoint-group>
   </md-content>
 </template>
 
@@ -35,12 +36,12 @@ import endpointComponent from "./endpointComponent.vue";
 import endpointGroup from "./endpointGroupComponent.vue";
 
 var getInfoInstance = new getInfo.GetInformation();
-var appName = "smartConnector3";
+// var appName = "smartConnector";
 
 export default {
   name: "endpointGlobalComponent",
   components: { endpointComponent, endpointGroup },
-  props: ["deviceNode"],
+  props: ["deviceNode", "appName"],
   data() {
     return {
       endpoints: [],
@@ -58,17 +59,20 @@ export default {
   },
   watch: {
     deviceNode: function(newDeviceNode) {
-      // var _self = this;
       if (typeof newDeviceNode != "undefined") {
         this.endpoints = this.deviceNode.getChildrenByAppByRelation(
-          appName,
+          this.appName,
           "hasEndpoint"
         );
 
+        console.log("endpoints", this.endpoints);
+
         this.endPointsGroupNodes = this.deviceNode.getChildrenByAppByRelation(
-          appName,
+          this.appName,
           "hasEndpointGroup"
         );
+
+        console.log("endPointsGroupNodes", this.endPointsGroupNodes);
       } else {
         console.log("no");
       }

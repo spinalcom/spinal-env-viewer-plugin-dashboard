@@ -105,6 +105,7 @@ export default {
         _self.chartData = {
           datasets: [
             {
+              /** Bind */
               data: [
                 parseInt(_self.endpoint.currentValue),
                 _self.endpoint.max -
@@ -161,6 +162,7 @@ export default {
   },
   watch: {
     endpointNode: function() {
+      console.log("endpointNodeChangedInEndpointComponent", this.endpointNode);
       this.getEndpoints();
     }
   }

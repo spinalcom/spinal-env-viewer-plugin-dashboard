@@ -1,10 +1,8 @@
 <script>
-FileSystem.debug = true;
 import Vue from "vue";
-import contextManager from "./contextManager.vue";
-// import circularMenu from ''
+import dashboardManager from "./dashboardManager.vue";
 
-const ComponentCtor1 = Vue.extend(contextManager);
+const ComponentCtor1 = Vue.extend(dashboardManager);
 const ClassName = "dashboard";
 const globalType = typeof window === "undefined" ? global : window;
 const spinalSystem = globalType.spinal.spinalSystem;

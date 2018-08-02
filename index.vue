@@ -10,6 +10,7 @@ const spinalSystem = globalType.spinal.spinalSystem;
 const PanelTitle1 = "dashboard";
 const ButtonLabel1 = "dashboard";
 const ButtonIcon1 = "configuration";
+var itemSelected;
 
 const classExtention = class {
   constructor(viewer, options) {
@@ -56,22 +57,26 @@ const classExtention = class {
     // button1.setToolTip(ButtonLabel1);
 
     this.initialize();
-    spinal.circularMenu.addButton(this.openClosePanel.bind(this), "folder");
+    // spinal.circularMenu.addButton(this.openClosePanel.bind(this), "folder");
   }
   initialize() {
     var _container1 = document.createElement("div");
     _container1.className = this.panel1.container.id + "-pannelcontainer";
     _container1.style.height = "80% !important";
     _container1.style.overflowY = "auto";
+    _container1.style.width = "400px";
+    // this.panel1.container.style.width = "600px !important";
+    // this.panel1.container.classList.add("dashboard-panel");
     this.panel1.container.appendChild(_container1);
     new ComponentCtor1().$mount(_container1);
   }
 
-  openClosePanel() {
-    if (this.panel1.isVisible()) {
-      this.panel1.setVisible(false);
-    } else this.panel1.setVisible(true);
-  }
+  // openClosePanel() {
+  //   EventBus.$on("getNodeClick", el => {
+  //     itemSelected = el;
+  //     console.log("element inside nodeClick", itemSelected);
+  //   });
+  // }
 };
 export default new class {
   constructor() {
@@ -89,4 +94,7 @@ export default new class {
 .bkcolor {
   background-color: rgba(17, 48, 223, 0.644);
 }
+/* .dashboard-panel {
+  width: 400px !important;
+} */
 </style>

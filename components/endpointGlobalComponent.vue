@@ -10,11 +10,13 @@
         <md-button @click="showOrHideOther">{{ showEndpoint ? "Hide" : "Show" }}</md-button>
       </md-toolbar>
 
-      <endpoint-component v-if="showEndpoint"
-                          @selectEndpoint="selectEndpoint"
-                          v-for="endpoint in endpoints"
-                          :key="endpoint._server_id"
-                          :endpointNode="endpoint"></endpoint-component>
+      <div class="md-layout md-alignment-center">
+        <endpoint-component v-if="showEndpoint"
+                            @selectEndpoint="selectEndpoint"
+                            v-for="endpoint in endpoints"
+                            :key="endpoint._server_id"
+                            :endpointNode="endpoint"></endpoint-component>
+      </div>
 
     </div>
 
@@ -59,22 +61,31 @@ export default {
   },
   watch: {
     deviceNode: function(newDeviceNode) {
+      var _self = this;
+
       if (typeof newDeviceNode != "undefined") {
-        this.endpoints = this.deviceNode.getChildrenByAppByRelation(
-          this.appName,
-          "hasEndpoint"
-        );
+        this.deviceNode.getElement().then(m => {
+          var type = m.constructor.name;
 
-        console.log("endpoints", this.endpoints);
+          if (type == "SpinalDevice") {
+            //Si spinalDevice
+            _self.endpoints = _self.deviceNode.getChildrenByAppByRelation(
+              _self.appName,
+              "hasEndpoint"
+            );
 
-        this.endPointsGroupNodes = this.deviceNode.getChildrenByAppByRelation(
-          this.appName,
-          "hasEndpointGroup"
-        );
-
-        console.log("endPointsGroupNodes", this.endPointsGroupNodes);
-      } else {
-        console.log("no");
+            _self.endPointsGroupNodes = _self.deviceNode.getChildrenByAppByRelation(
+              _self.appName,
+              "hasEndpointGroup"
+            );
+          } else if (type == "SpinalEndpoint") {
+            //si endpoint
+            _self.endpoints = [_self.deviceNode];
+          } else if (type == "SpinalEndpointGroup") {
+            //si endpointGroup
+            _self.endPointsGroupNodes = [this.deviceNode];
+          }
+        });
       }
     }
   }
@@ -100,4 +111,8 @@ export default {
 /* .md-dense.md-primary {
   min-height: 30px !important;
 } */
+
+.mylayout {
+  width: 100%;
+}
 </style>

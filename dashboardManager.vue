@@ -11,7 +11,8 @@
                                :deviceNode="deviceNodes"
                                :appName="appName"></endpoint-global-component>
 
-    <graph-component :endpointSelected="endpointSelected"></graph-component>
+    <graph-component :endpointSelected="endpointSelected"
+                     :appName="appName"></graph-component>
 
     <!-- <md-list>
         <device-component @itemSelected="on_item_selected"
@@ -41,8 +42,8 @@ export default {
       inc: 0,
       deviceNodes: null,
       appName: null,
-      endpointSelected: null
-      // item_selected: null
+      endpointSelected: null,
+      bimObjectSelected: null
     };
   },
   components: { endpointGlobalComponent, graphComponent },
@@ -53,11 +54,30 @@ export default {
     on_item_selected: function(item) {
       this.endpointSelected = item;
     },
+    openClosePanel() {
+      var _panel = globalType.spinal.panelManager.panelsGroup.dashboard[0];
+
+      if (!_panel.isVisible()) {
+        _panel.setVisible(true);
+      }
+    },
     getEvents: function() {
       var _self = this;
+
       EventBus.$on("nodeContext", el => {
         _self.appName = el.context.name.get();
         _self.deviceNodes = el.node;
+        // _self.openClosePanel();
+      });
+
+      EventBus.$on("openDashboard", el => {
+        _self.appName = el.context.name.get();
+        _self.deviceNodes = el.node;
+        _self.openClosePanel();
+      });
+
+      EventBus.$on("getNodeClick", el => {
+        _self.bimObjectSelected = el;
       });
     },
     linkToDB: function() {
@@ -67,23 +87,18 @@ export default {
           typeof globalType.spinal.contextStudio.graph != "undefined"
         ) {
           graph = globalType.spinal.contextStudio.graph;
-
-          // graph.getApp(appName).then(el => {
-          //   if (typeof el.startingNode != "undefined") {
-          //     this.deviceNodes = el.startingNode.getChildrenByAppByRelation(
-          //       appName,
-          //       "hasDevice"
-          //     )[2];
-          //   }
-          // });
           clearInterval(interval);
         }
       }, 500);
+    },
+    selectBimObject() {
+      console.log("click", this.bimObjectSelected);
     }
   },
   mounted() {
     spinalSystem = globalType.spinal.spinalSystem;
     viewer = globalType.v;
+    spinal.circularMenu.addButton(this.selectBimObject, "show_chart");
     EventBus = globalType.spinal.eventBus;
     this.getEvents();
     this.linkToDB();

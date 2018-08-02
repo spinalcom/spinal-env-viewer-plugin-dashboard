@@ -39,38 +39,60 @@ export default {
   watch: {
     endpointSelected: function() {
       var _self = this;
-      this.endpointSelected
-        .getRelationsByAppNameByType(this.appName, "hasHistory")[0]
-        .getNodeList2()[0]
-        .getElement()
-        .then(el => {
-          _self.chartData = {
-            labels: [],
-            datasets: [
-              {
-                label: "Courbe",
-                data: el.get(),
-                backgroundColor: "#f87979"
-              }
-            ]
-          };
+      console.log("appName", this.appName);
 
-          for (var i = 0; i < el.length; i++) {
-            _self.chartData.labels.push(i.toString());
-          }
+      var historyValue = this.endpointSelected.getRelationsByAppNameByType(
+        this.appName,
+        "hasHistory"
+      )[0];
 
-          _self.chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              yAxes: [
+      if (historyValue) {
+        historyValue
+          .getNodeList2()[0]
+          .getElement()
+          .then(el => {
+            _self.chartData = {
+              labels: [],
+              datasets: [
                 {
-                  stacked: true
+                  label: "Courbe",
+                  data: el.get(),
+                  backgroundColor: "#f87979"
                 }
               ]
+            };
+
+            for (var i = 0; i < el.length; i++) {
+              _self.chartData.labels.push(i.toString());
             }
-          };
-        });
+          });
+      } else {
+        _self.chartData = {
+          title: "",
+          labels: ["0", "1", "2"],
+          datasets: [
+            {
+              label: "Courbe",
+              data: [],
+              backgroundColor: "#f87979"
+            }
+          ]
+        };
+      }
+      _self.chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [
+            {
+              stacked: true
+            }
+          ]
+        },
+        legend: {
+          display: false
+        }
+      };
     }
   }
 };

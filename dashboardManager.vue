@@ -80,14 +80,6 @@ export default {
 
       EventBus.$on("getNodeClick", el => {
         _self.bimObjectSelected = el;
-
-        /*
-        *  - _self.bimObjectSelected est le SpinalNode du bimObject Selectionné
-        *  - Ajouter le code pour Recuperer le SpinalNode du device ou du endpoint
-        *  - faire _self.deviceNodes = le spinalNode recupéré
-        */
-
-        _self.openClosePanel();
       });
     },
     linkToDB: function() {
@@ -102,7 +94,14 @@ export default {
       }, 500);
     },
     selectBimObject() {
-      console.log("click", this.bimObjectSelected);
+      
+        /*
+        *  - _self.bimObjectSelected est le SpinalNode du bimObject Selectionné
+        *  - Ajouter le code pour Recuperer le SpinalNode du device ou du endpoint
+        *  - faire _self.deviceNodes = le spinalNode recupéré
+        */
+
+        _self.openClosePanel();
     }
   },
   mounted() {

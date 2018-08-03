@@ -46,6 +46,8 @@ const classExtention = class {
   // This function is to create your button on viewer, it used autodesk forge api
   createUI() {
     this.panel1 = new PanelClass(this.viewer, PanelTitle1);
+    this.panel1.container.style.top = "30%";
+    this.panel1.container.style.width = "40%";
     globalType.spinal.panelManager.registerPanel(this.panel1, ClassName);
 
     // var button1 = new Autodesk.Viewing.UI.Button(ButtonLabel1);

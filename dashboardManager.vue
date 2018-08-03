@@ -65,21 +65,37 @@ export default {
       var _self = this;
 
       EventBus.$on("nodeContext", el => {
-        console.log("nodeContext",el);
+        console.log("nodeContext", el);
         _self.appName = el.context.name.get();
         _self.deviceNodes = el.node;
         // _self.openClosePanel();
       });
 
       EventBus.$on("openDashboard", el => {
-        console.log("openDashboard",el); 
+        console.log("openDashboard", el);
         _self.appName = el.context.name.get();
         _self.deviceNodes = el.node;
         _self.openClosePanel();
       });
 
       EventBus.$on("getNodeClick", el => {
+        console.log("getNodeClick", el);
         _self.bimObjectSelected = el;
+        let relations = el.getRelationsByAppNameByType("linker", "link");
+        if (relations.length > 0) {
+          let relation = relations[0];
+          let node = relation.getNodeList2()[0];
+          node.getElement().then(ele => {
+            if (
+              ele.constructor.name === "SpinalEndpoint" ||
+              ele.constructor.name === "SpinalDevice"
+            ) {
+              _self.appName = "smartConnector";
+              _self.deviceNodes = node;
+              _self.openClosePanel();
+            }
+          });
+        }
       });
     },
     linkToDB: function() {
@@ -94,14 +110,7 @@ export default {
       }, 500);
     },
     selectBimObject() {
-      
-        /*
-        *  - _self.bimObjectSelected est le SpinalNode du bimObject Selectionné
-        *  - Ajouter le code pour Recuperer le SpinalNode du device ou du endpoint
-        *  - faire _self.deviceNodes = le spinalNode recupéré
-        */
-
-        _self.openClosePanel();
+      console.log("click", this.bimObjectSelected);
     }
   },
   mounted() {

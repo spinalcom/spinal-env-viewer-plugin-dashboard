@@ -78,8 +78,16 @@ export default {
         _self.openClosePanel();
       });
 
-      EventBus.$on("getNodeClick", el => {VueComponent
+      EventBus.$on("getNodeClick", el => {
         _self.bimObjectSelected = el;
+
+        /*
+        *  - _self.bimObjectSelected est le SpinalNode du bimObject Selectionné
+        *  - Ajouter le code pour Recuperer le SpinalNode du device ou du endpoint
+        *  - faire _self.deviceNodes = le spinalNode recupéré
+        */
+
+        _self.openClosePanel();
       });
     },
     linkToDB: function() {

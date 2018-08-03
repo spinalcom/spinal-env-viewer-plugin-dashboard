@@ -65,18 +65,20 @@ export default {
       var _self = this;
 
       EventBus.$on("nodeContext", el => {
+        console.log("nodeContext",el);
         _self.appName = el.context.name.get();
         _self.deviceNodes = el.node;
         // _self.openClosePanel();
       });
 
       EventBus.$on("openDashboard", el => {
+        console.log("openDashboard",el); 
         _self.appName = el.context.name.get();
         _self.deviceNodes = el.node;
         _self.openClosePanel();
       });
 
-      EventBus.$on("getNodeClick", el => {
+      EventBus.$on("getNodeClick", el => {VueComponent
         _self.bimObjectSelected = el;
       });
     },

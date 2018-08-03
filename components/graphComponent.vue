@@ -24,10 +24,15 @@ export default {
   data() {
     return {
       chartData: null,
-      chartOptions: null
+      chartOptions: null,
+      dataLst: null
     };
   },
-  methods: {},
+  methods: {
+    updateData: function() {
+      this.chartData.datasets[0].data = this.dataLst.get();
+    }
+  },
   computed: {
     endpointS: function() {
       if (this.endpointSelected) {
@@ -51,18 +56,20 @@ export default {
           .getNodeList2()[0]
           .getElement()
           .then(el => {
+            el.history.bind(this.updateData);
+            this.dataLst = el.history;
             _self.chartData = {
               labels: [],
               datasets: [
                 {
                   label: "Courbe",
-                  data: el.get(),
+                  data: el.history.get(),
                   backgroundColor: "#f87979"
                 }
               ]
             };
 
-            for (var i = 0; i < el.length; i++) {
+            for (var i = 0; i < el.windowSize.get(); i++) {
               _self.chartData.labels.push(i.toString());
             }
           });
@@ -118,4 +125,3 @@ export default {
   padding: 5px;
 }
 </style>
-

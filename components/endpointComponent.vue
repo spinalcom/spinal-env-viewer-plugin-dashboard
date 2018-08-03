@@ -1,6 +1,6 @@
 <template>
 
-  <md-content class="md-layout-item endpointContent"
+  <md-content class="md-layout-item md-size-25 endpointContent"
               @click="selectEndpoint">
     <!-- @mouseover="hoverEndpoint"
               @mouseleave="mouseLeaveEndpoint" -->
@@ -13,7 +13,7 @@
     <!-- ***************************************************** Autre Type ******************************************************************************* -->
 
     <div v-if="endpoint && endpoint.type == 'number'"
-         class="md-size-15 endpoint_doughnut">
+         class="endpoint_doughnut">
       <!--  && !mouseOver -->
       <chart-component :data="chartData"
                        :options="chartOptions"></chart-component>
@@ -22,7 +22,7 @@
     <!-- ***************************************************** Type String ******************************************************************************* -->
 
     <div v-if="endpoint && endpoint.type == 'string'"
-         class="md-size-15 endpoint_string">
+         class="endpoint_string">
       <!--  && !mouseOver -->
 
       <div class="name">
@@ -33,10 +33,9 @@
       </div>
     </div>
 
-
     <!-- ***************************************************** Type Boolean ******************************************************************************* -->
     <div v-if="endpoint && endpoint.type == 'boolean'"
-         class="md-size-15 endpoint_boolean ">
+         class="endpoint_boolean ">
       <!--  && !mouseOver -->
       <div class="name">
         {{endpoint.name}}

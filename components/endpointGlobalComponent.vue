@@ -10,7 +10,7 @@
         <md-button @click="showOrHideOther">{{ showEndpoint ? "Hide" : "Show" }}</md-button>
       </md-toolbar>
 
-      <div class="md-layout md-alignment-center">
+      <div class="md-layout md-gutter">
         <endpoint-component v-if="showEndpoint"
                             @selectEndpoint="selectEndpoint"
                             v-for="endpoint in endpoints"

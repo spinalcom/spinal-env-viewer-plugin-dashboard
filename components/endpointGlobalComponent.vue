@@ -15,7 +15,8 @@
                             @selectEndpoint="selectEndpoint"
                             v-for="endpoint in endpoints"
                             :key="endpoint._server_id"
-                            :endpointNode="endpoint"></endpoint-component>
+                            :endpointNode="endpoint"
+                            :endpointSelected="endpointSelected"></endpoint-component>
       </div>
 
     </div>
@@ -26,7 +27,8 @@
                     :key="endpoint_group._server_id"
                     :endpointGroupNode="endpoint_group"
                     @selectEndpoint="selectEndpoint"
-                    :appName="appName"></endpoint-group>
+                    :appName="appName"
+                    :endpointSelected="endpointSelected"></endpoint-group>
   </md-content>
 </template>
 
@@ -43,7 +45,7 @@ var getInfoInstance = new getInfo.GetInformation();
 export default {
   name: "endpointGlobalComponent",
   components: { endpointComponent, endpointGroup },
-  props: ["deviceNode", "appName"],
+  props: ["deviceNode", "appName", "endpointSelected"],
   data() {
     return {
       endpoints: [],

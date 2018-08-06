@@ -40,6 +40,8 @@ var GetInformation = class GetInformation extends Model {
     deviceCopy['currentValue'] = device.currentValue.get();
     deviceCopy['type'] = typeof device.currentValue.get();
 
+    // deviceCopy['type'] = device.dataType.get();
+
     return deviceCopy;
 
   }

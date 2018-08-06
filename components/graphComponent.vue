@@ -36,6 +36,7 @@ export default {
   computed: {
     endpointS: function() {
       if (this.endpointSelected) {
+        console.log("ssssss", this.endpointSelected);
         return this.endpointSelected.name.get();
       }
       return "";

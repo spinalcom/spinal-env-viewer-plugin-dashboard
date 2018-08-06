@@ -1,6 +1,7 @@
 <template>
 
   <md-content class="md-layout-item md-size-25 endpointContent"
+              :class="{selected: isEndpointSelected() }"
               @click="selectEndpoint">
     <!-- @mouseover="hoverEndpoint"
               @mouseleave="mouseLeaveEndpoint" -->
@@ -12,7 +13,7 @@
 
     <!-- ***************************************************** Autre Type ******************************************************************************* -->
 
-    <div v-if="endpoint && endpoint.type == 'number'"
+    <div v-if="endpoint && endpoint.type.toLowerCase() == 'number'"
          class="endpoint_doughnut">
       <!--  && !mouseOver -->
       <chart-component :data="chartData"
@@ -21,27 +22,29 @@
 
     <!-- ***************************************************** Type String ******************************************************************************* -->
 
-    <div v-if="endpoint && endpoint.type == 'string'"
+    <div v-if="endpoint && endpoint.type.toLowerCase() == 'string'"
          class="endpoint_string">
       <!--  && !mouseOver -->
 
       <div class="name">
         {{endpoint.name}}
       </div>
-      <div class="value">
+      <div class="value"
+           :class="{falseValue : !booleanTrueOrFalse() , trueValue : booleanTrueOrFalse()}">
         {{endpoint.currentValue}}
       </div>
     </div>
 
     <!-- ***************************************************** Type Boolean ******************************************************************************* -->
-    <div v-if="endpoint && endpoint.type == 'boolean'"
+    <div v-if="endpoint && endpoint.type.toLowerCase() == 'boolean'"
          class="endpoint_boolean ">
       <!--  && !mouseOver -->
       <div class="name">
         {{endpoint.name}}
       </div>
-      <div class="value">
-        {{endpoint.currentValue ? "1" : "0"}}
+      <div class="value"
+           :class="{falseValue : booleanTrueOrFalse() == false , trueValue : booleanTrueOrFalse()}">
+        {{endpoint.currentValue }}
       </div>
     </div>
 
@@ -83,7 +86,7 @@ var getInfoInstance = new getInfo.GetInformation();
 export default {
   name: "endpointComponent",
   components: { chartComponent },
-  props: ["endpointNode"],
+  props: ["endpointNode", "endpointSelected"],
   data() {
     return {
       endpoint: null,
@@ -152,13 +155,30 @@ export default {
           };
         });
       });
+    },
+
+    isEndpointSelected: function() {
+      if (this.endpointNode && this.endpointSelected) {
+        if (this.endpointNode.id.get() == this.endpointSelected.id.get()) {
+          return true;
+        }
+      }
+      return false;
+    },
+
+    booleanTrueOrFalse: function() {
+      if (
+        this.endpoint.currentValue == "1" ||
+        this.endpoint.currentValue.toUpperCase() == "TRUE"
+      ) {
+        return true;
+      } else if (
+        this.endpoint.currentValue == "0" ||
+        this.endpoint.currentValue.toUpperCase() == "FALSE"
+      ) {
+        return false;
+      }
     }
-    // hoverEndpoint: function() {
-    //   this.mouseOver = true;
-    // }
-    // mouseLeaveEndpoint: function() {
-    //   this.mouseOver = false;
-    // }
   },
   mounted() {
     if (this.endpointNode) {
@@ -179,17 +199,22 @@ export default {
   min-height: 85px;
   display: inline-block;
   justify-content: center;
-  // margin-left: 5px;
   padding: 7px;
-  // margin-top: 10px;
-  // margin-bottom: 10px;
   margin: 5px;
   background: #242424;
+}
+
+.md-content .selected {
+  background: #0097ef;
 }
 
 .md-content .endpointContent:hover {
   background: gray;
   cursor: pointer;
+}
+
+.md-content .selected:hover {
+  background: #0097ef;
 }
 
 .md-content .endpointContent .endpoint_name {
@@ -204,19 +229,13 @@ export default {
 .md-content .endpointContent .endpoint_doughnut,
 .md-content .endpointContent .endpoint_string,
 .md-content .endpointContent .endpoint_boolean {
-  width: 90%;
+  width: 100%;
   height: 100%;
   display: block;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-
-//  {
-//   width: 90%;
-//   height: 100%;
-//   display: block;
-// }
 
 .md-content .endpointContent .endpoint_string .name,
 .md-content .endpointContent .endpoint_boolean .name {
@@ -226,18 +245,25 @@ export default {
   font-size: 12px;
   text-transform: uppercase;
   font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .md-content .endpointContent .endpoint_string .value {
   width: 100%;
   height: 80%;
   min-height: 20px;
-  font-size: 12px;
+  font-size: 17px;
   color: #f87979;
   align-items: center;
   padding-top: 8px;
   text-align: center;
   text-transform: uppercase;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 3;
 }
 
 .md-content .endpointContent .endpoint_boolean .value {
@@ -250,5 +276,17 @@ export default {
   padding-top: 8px;
   text-align: center;
   text-transform: uppercase;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 5;
+}
+
+.md-content .endpointContent .trueValue {
+  background: green;
+}
+
+.md-content .endpointContent .falseValue {
+  background: red;
 }
 </style>

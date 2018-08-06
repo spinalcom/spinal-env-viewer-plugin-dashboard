@@ -14,7 +14,8 @@
                           :key="endpoint._server_id"
                           :endpointNode="endpoint"
                           @selectEndpoint="select_endpoint"
-                          :appName="appName"></endpoint-component>
+                          :appName="appName"
+                          :endpointSelected="endpointSelected"></endpoint-component>
     </div>
 
   </md-content>
@@ -30,7 +31,7 @@ var getInfoInstance = new getInfo.GetInformation();
 export default {
   name: "endpointGroup",
   components: { endpointComponent },
-  props: ["endpointGroupNode", "appName"],
+  props: ["endpointGroupNode", "appName", "endpointSelected"],
   data() {
     return {
       endPointGroupName: "",

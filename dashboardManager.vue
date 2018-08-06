@@ -9,7 +9,8 @@
 
     <endpoint-global-component @select_endpoint="on_item_selected"
                                :deviceNode="deviceNodes"
-                               :appName="appName"></endpoint-global-component>
+                               :appName="appName"
+                               :endpointSelected="endpointSelected"></endpoint-global-component>
 
     <graph-component :endpointSelected="endpointSelected"
                      :appName="appName"></graph-component>

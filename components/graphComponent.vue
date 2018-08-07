@@ -9,6 +9,12 @@
                             :data="chartData"
                             :options="chartOptions"></line-chart-component>
     </div>
+
+    <!-- <div class="chart"
+         v-if="!graphVisible">
+      <h1>No data !</h1>
+    </div> -->
+
   </div>
 </template>
 
@@ -25,6 +31,7 @@ export default {
     return {
       chartData: null,
       chartOptions: null,
+      graphVisible: null,
       dataLst: null
     };
   },
@@ -36,7 +43,6 @@ export default {
   computed: {
     endpointS: function() {
       if (this.endpointSelected) {
-        console.log("ssssss", this.endpointSelected);
         return this.endpointSelected.name.get();
       }
       return "";
@@ -53,6 +59,7 @@ export default {
       )[0];
 
       if (historyValue) {
+        _self.graphVisible = true;
         historyValue
           .getNodeList2()[0]
           .getElement()
@@ -73,34 +80,36 @@ export default {
             for (var i = 0; i < el.windowSize.get(); i++) {
               _self.chartData.labels.push(i.toString());
             }
+
+            _self.chartOptions = {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                yAxes: [
+                  {
+                    stacked: true
+                  }
+                ]
+              },
+              legend: {
+                display: false
+              }
+            };
           });
       } else {
-        _self.chartData = {
-          title: "",
-          labels: ["0", "1", "2"],
-          datasets: [
-            {
-              label: "Courbe",
-              data: [],
-              backgroundColor: "#f87979"
-            }
-          ]
-        };
+        // _self.chartData = {
+        //   title: "",
+        //   labels: ["0", "1", "2"],
+        //   datasets: [
+        //     {
+        //       label: "Courbe",
+        //       data: [],
+        //       backgroundColor: "#f87979"
+        //     }
+        //   ]
+        // };
+        _self.graphVisible = true;
       }
-      _self.chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          yAxes: [
-            {
-              stacked: true
-            }
-          ]
-        },
-        legend: {
-          display: false
-        }
-      };
     }
   }
 };

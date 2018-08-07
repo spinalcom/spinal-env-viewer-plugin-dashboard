@@ -8,7 +8,7 @@
       <md-button @click="showHideEndpoints">{{!show ? "Show" : "Hide"}}</md-button>
     </md-toolbar>
 
-    <div class="md-layout md-gutter"
+    <div class="md-layout md-alignment-top-space-between"
          v-if="show">
       <endpoint-component v-for="endpoint in endPointGroups"
                           :key="endpoint._server_id"

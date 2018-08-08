@@ -38,9 +38,11 @@ var GetInformation = class GetInformation extends Model {
     deviceCopy['dataNature'] = device.dataNature.get();
     deviceCopy['unit'] = device.unit.get();
     deviceCopy['currentValue'] = device.currentValue.get();
-    deviceCopy['type'] = typeof device.currentValue.get();
+    // deviceCopy['type'] = typeof device.currentValue.get();
+    deviceCopy['type'] = device.dataType.get();
 
-    // deviceCopy['type'] = device.dataType.get();
+    console.log("device", device);
+    console.log("deviceCopy", deviceCopy.type);
 
     return deviceCopy;
 

@@ -98,7 +98,6 @@ export default {
       }, 500);
     },
     selectBimObject() {
-      console.log("click", this.bimObjectSelected);
       let relations = this.bimObjectSelected.getRelationsByAppNameByType(
         "linker",
         "link"
@@ -117,7 +116,7 @@ export default {
           }
         });
       } else {
-        console.log("no relation found !");
+        alert("no relation found !");
       }
     }
   },

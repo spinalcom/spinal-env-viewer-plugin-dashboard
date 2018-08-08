@@ -64,11 +64,6 @@ export default {
   },
   watch: {
     endpointGroupNode: function() {
-      console.log(
-        "endpointNodeChangedInEndpointGroupComponent",
-        this.endpointNode
-      );
-
       this.endPointGroupName = this.endpointGroupNode.name.get();
       this.endPointGroups = this.endpointGroupNode.getChildrenByAppByRelation(
         this.appName,

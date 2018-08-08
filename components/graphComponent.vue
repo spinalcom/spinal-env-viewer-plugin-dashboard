@@ -1,7 +1,15 @@
 <template>
   <div class="graph">
-    <div class="title">
-      {{endpointS}}
+    <div class="title"
+         md-theme="selection-orange">
+      <div class="titleText">{{endpointS}}</div>
+      <div class="titlebtn">
+        <md-button v-if="endpointSelected"
+                   title="edit"
+                   class="md-icon-button md-dense">
+          <md-icon>edit</md-icon>
+        </md-button>
+      </div>
     </div>
 
     <div class="chart">
@@ -51,7 +59,6 @@ export default {
   watch: {
     endpointSelected: function() {
       var _self = this;
-      console.log("appName", this.appName);
 
       var historyValue = this.endpointSelected.getRelationsByAppNameByType(
         this.appName,
@@ -126,7 +133,20 @@ export default {
   width: 100%;
   height: 20%;
   font-size: 16px;
-  text-align: center;
+  /* text-align: center; */
+}
+
+.graph .title .titleText {
+  width: 80%;
+  height: 100%;
+  padding-top: 6px;
+  float: left;
+}
+
+.graph .title .titlebtn {
+  width: 10%;
+  height: 100%;
+  float: right;
 }
 
 .graph .chart {

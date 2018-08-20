@@ -2,14 +2,22 @@
 
   <md-content>
 
-    <md-toolbar class="md-dense md-primary">
+    <md-toolbar class="md-dense md-primary"
+                style="min-height : 20px; height : 20px; padding-right: 0px;">
       <h3 class="md-title"
           style="flex: 1">{{endPointGroupName}}</h3>
-      <md-button @click="showHideEndpoints">{{!show ? "Show" : "Hide"}}</md-button>
+      <md-button class="md-icon-button md-dense"
+                 @click="showHideEndpoints">
+        <md-icon v-if="!show">
+          keyboard_arrow_down
+        </md-icon>
+        <md-icon v-if="show">
+          keyboard_arrow_up
+        </md-icon>
+      </md-button>
     </md-toolbar>
 
-    <div class="md-layout md-alignment-top-space-between"
-         v-if="show">
+    <div v-if="show">
       <endpoint-component v-for="endpoint in endPointGroups"
                           :key="endpoint._server_id"
                           :endpointNode="endpoint"

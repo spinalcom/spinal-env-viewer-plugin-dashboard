@@ -2,11 +2,6 @@
 <template>
   <div class="dashboard">
 
-    <md-button @click="test()"
-               class="md-icon-button">
-      <md-icon>add</md-icon>
-    </md-button>
-
     <endpoint-global-component @select_endpoint="on_item_selected"
                                :deviceNode="deviceNodes"
                                :appName="appName"
@@ -14,13 +9,6 @@
 
     <graph-component :endpointSelected="endpointSelected"
                      :appName="appName"></graph-component>
-
-    <!-- <md-list>
-        <device-component @itemSelected="on_item_selected"
-                          :devices="devicesList"></device-component>
-      </md-list>
-
-      <p>{{item_selected}}</p> -->
 
   </div>
 </template>
@@ -79,6 +67,9 @@ export default {
       EventBus.$on("openDashboard", el => {
         _self.appName = el.context.name.get();
         _self.deviceNodes = el.node;
+        globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
+          "Dashboard : " + el.node.name.get()
+        );
         _self.openClosePanel();
       });
 
@@ -140,17 +131,5 @@ dashboard .md-icon-button {
   width: 100%;
   height: 20px;
 }
-
-.md-toolbar.md-dense {
-  min-height: 30px !important;
-}
-
-.dashboard .md-toolbar {
-  height: 20px;
-  min-height: 20px;
-}
-
-.dashboard .md-title {
-  font-size: 15px;
-}
 </style>
+

@@ -1,76 +1,22 @@
 <template>
 
-  <md-content class="md-layout-item md-size-25 endpointContent"
-              :class="{selected: isEndpointSelected() }"
+  <md-content class="endpointContent"
+              :class="{selected: isEndpointSelected(), three_item : itemCount == 3, four_item : itemCount == 4 , five_item : itemCount == 5, six_item :itemCount == 6}"
+
               @click="selectEndpoint">
-    <!-- @mouseover="hoverEndpoint"
-              @mouseleave="mouseLeaveEndpoint" -->
 
-    <!-- <div v-if="endpoint"
-         class="endpoint_name">
-      {{endpoint.name}}
-    </div> -->
-
-    <!-- ***************************************************** Autre Type ******************************************************************************* -->
-
-    <div v-if="endpoint && endpoint.type.toLowerCase() == 'number'"
-         class="endpoint_doughnut">
-      <!--  && !mouseOver -->
-      <chart-component :data="chartData"
-                       :options="chartOptions"></chart-component>
-    </div>
-
-    <!-- ***************************************************** Type String ******************************************************************************* -->
-
-    <div v-if="endpoint && endpoint.type.toLowerCase() == 'string'"
-         class="endpoint_string">
-      <!--  && !mouseOver -->
-
-      <div class="name">
+    <div v-if="endpoint"
+         :class="{endpoint_boolean : isBoolean(), endpoint_string : !isBoolean()}">
+      <div class="name"
+           :title="endpoint.name">
         {{endpoint.name}}
       </div>
       <div class="value"
-           :class="{falseValue : !booleanTrueOrFalse() , trueValue : booleanTrueOrFalse()}">
-        {{endpoint.currentValue}}
-      </div>
-    </div>
-
-    <!-- ***************************************************** Type Boolean ******************************************************************************* -->
-    <div v-if="endpoint && endpoint.type.toLowerCase() == 'boolean'"
-         class="endpoint_boolean ">
-      <!--  && !mouseOver -->
-      <div class="name">
-        {{endpoint.name}}
-      </div>
-      <div class="value"
-           :class="{falseValue : booleanTrueOrFalse() == false , trueValue : booleanTrueOrFalse()}">
+           :title="endpoint.currentValue"
+           :class="{falseValue : !booleanTrueOrFalse() && isBoolean()  , trueValue : booleanTrueOrFalse() && isBoolean()}">
         {{endpoint.currentValue }}
       </div>
     </div>
-
-    <!-- ***************************************************** Mouse Over ******************************************************************************* -->
-
-    <!-- <div v-if="endpoint && mouseOver"
-         class="endpoint_boolean">
-      <div class="name">
-        {{endpoint.name}}
-      </div>
-      <div class="value">
-
-        <md-button title="edit"
-                   class="md-icon-button md-dense"
-                   @click="editEndpoint">
-          <md-icon>edit</md-icon>
-        </md-button>
-
-        <md-button title="show chart"
-                   class="md-icon-button md-dense"
-                   @click="selectEndpoint">
-          <md-icon>show_chart</md-icon>
-        </md-button>
-
-      </div>
-    </div> -->
 
   </md-content>
 
@@ -92,7 +38,8 @@ export default {
       endpoint: null,
       chartData: null,
       chartOptions: null,
-      mouseOver: false
+      mouseOver: false,
+      itemCount: 3
     };
   },
   methods: {
@@ -178,12 +125,23 @@ export default {
       ) {
         return false;
       }
+    },
+    isBoolean: function() {
+      if (this.endpoint && this.endpoint.type.toLowerCase() == "boolean") {
+        return true;
+      }
+      return false;
     }
   },
   mounted() {
+    var _self = this;
     if (this.endpointNode) {
       this.getEndpoints();
     }
+
+    globalType.spinal.eventBus.$on("itemCountPerLineChange", el => {
+      _self.itemCount = el;
+    });
   },
   watch: {
     endpointNode: function() {
@@ -193,15 +151,31 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .md-content .endpointContent {
-  width: 75px;
-  min-height: 85px;
+  /* width: 85px !important; */
+  height: 85px;
   display: inline-block;
   justify-content: center;
   padding: 7px;
   margin: 5px;
   background: #242424;
+}
+
+.md-content .endpointContent.three_item {
+  width: calc(100% / 3);
+}
+
+.md-content .endpointContent.four_item {
+  width: calc(100% / 4);
+}
+
+.md-content .endpointContent.five_item {
+  width: calc(100% / 5);
+}
+
+.md-content .endpointContent.six_item {
+  width: calc(100% / 6);
 }
 
 .md-content .selected {
@@ -241,7 +215,7 @@ export default {
 .md-content .endpointContent .endpoint_boolean .name {
   width: 100%;
   height: 20%;
-  text-align: "center";
+  text-align: center;
   font-size: 12px;
   text-transform: uppercase;
   font-weight: bold;

@@ -79,7 +79,7 @@ export default {
                 {
                   label: "Courbe",
                   data: el.history.get(),
-                  backgroundColor: "#f87979"
+                  backgroundColor: "#356bab"
                 }
               ]
             };

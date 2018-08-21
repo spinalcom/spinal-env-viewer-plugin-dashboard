@@ -3,19 +3,6 @@ var GetInformation = class GetInformation extends Model {
     super();
   }
 
-  // ReturnDeviceLst(lst) {
-  //   var promiseLst = [];
-  //   arrayToReturn = [];
-
-  //   for (var i = 0; i < lst.length; i++) {
-  //     promiseLst.push(lst[i].getElement());
-  //   }
-
-  //   console.log("promiseLst", promiseLst);
-
-
-  //   return arrayToReturn;
-  // }
 
 
   getAllEndPoint(deviceNode) {
@@ -40,7 +27,7 @@ var GetInformation = class GetInformation extends Model {
     deviceCopy['currentValue'] = device.currentValue.get();
     // deviceCopy['type'] = typeof device.currentValue.get();
     deviceCopy['type'] = device.dataType.get() ? device.dataType.get() :
-      "string23";
+      "string";
 
     return deviceCopy;
 

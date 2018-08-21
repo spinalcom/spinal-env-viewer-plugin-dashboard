@@ -2,37 +2,42 @@
 
   <md-content class="endpointContainer">
 
-    <!-- <md-menu md-size="small">
-        NUMBER OF ITEMS TO DISPLAY PER LINE : &nbsp;
-
-        <md-button :md-ripple="false"
-                   md-menu-trigger>
-          <div>
-            {{itemCountPerLine}} &nbsp;
-            <i class="material-icons">
-              keyboard_arrow_down
-            </i>
-          </div>
-        </md-button>
-
-        <md-menu-content style="text-align: center">
-          <md-menu-item @click="changeItemCountPerLine(4)">4</md-menu-item>
-          <md-menu-item @click="changeItemCountPerLine(5)">5</md-menu-item>
-          <md-menu-item @click="changeItemCountPerLine(6)">6</md-menu-item>
-        </md-menu-content>
-      </md-menu> -->
-
     <md-list class="endpoint_sidebar">
       <md-list-item>
-        <span class="md-list-item-text"
-              title="NUMBER OF ITEMS TO DISPLAY PER LINE">NUMBER OF ITEMS TO DISPLAY PER LINE</span>
-        <md-menu md-size="small">
+        <div class="md-list-item-text"
+             title="NUMBER OF ITEMS TO DISPLAY PER LINE">
+          NUMBER OF ITEMS TO DISPLAY PER LINE
+        </div>
+
+        <md-button class="md-icon-button md-dense"
+                   title="increase"
+                   @click="changeItemCountPerLine('increase')">
+          <md-icon>add</md-icon>
+        </md-button>
+
+        <md-button class="md-icon-button md-dense"
+                   title="decrease"
+                   @click="changeItemCountPerLine('decrease')">
+          <md-icon>remove</md-icon>
+        </md-button>
+
+        <div class="lineCount">
+          {{itemCountPerLine}}
+        </div>
+
+        <!-- <md-menu md-size="small">
           <md-button md-menu-trigger>
             {{itemCountPerLine}}
             <md-icon>keyboard_arrow_down</md-icon>
           </md-button>
 
           <md-menu-content>
+            <md-menu-item style="text-align: center"
+                          @click="changeItemCountPerLine(1)">&nbsp;1</md-menu-item>
+
+            <md-menu-item style="text-align: center"
+                          @click="changeItemCountPerLine(2)">&nbsp;2</md-menu-item>
+
             <md-menu-item style="text-align: center"
                           @click="changeItemCountPerLine(3)">&nbsp;3</md-menu-item>
 
@@ -43,7 +48,7 @@
             <md-menu-item style="text-align: center"
                           @click="changeItemCountPerLine(6)">&nbsp;6</md-menu-item>
           </md-menu-content>
-        </md-menu>
+        </md-menu> -->
       </md-list-item>
     </md-list>
 
@@ -51,12 +56,14 @@
 
       <!--*********************************************************** Debut Others *****************************************************************************-->
       <div v-if="endpoints.length > 0">
-        <md-toolbar class="md-dense md-primary">
+        <md-toolbar class="md-dense"
+                    style="min-height : 30px; height : 30px; padding-right: 10px; 
+                background: #356bab">
           <h3 class="md-title"
               style="flex: 1">Others</h3>
           <md-button class="md-icon-button md-dense"
-                     @click="showOrHideOther">
-            <!-- {{ showEndpoint ? "Hide" : "Show" }} -->
+                     @click="showOrHideOther"
+                     style="margin-right: 20px;">
 
             <md-icon v-if="!showEndpoint">
               keyboard_arrow_down
@@ -68,7 +75,7 @@
           </md-button>
         </md-toolbar>
 
-        <div>
+        <div class="_endpoint_div_content">
           <endpoint-component v-if="showEndpoint"
                               @selectEndpoint="selectEndpoint"
                               v-for="endpoint in endpoints"
@@ -99,7 +106,6 @@ import endpointComponent from "./endpointComponent.vue";
 import endpointGroup from "./endpointGroupComponent.vue";
 
 var getInfoInstance = new getInfo.GetInformation();
-// var appName = "smartConnector";
 
 export default {
   name: "endpointGlobalComponent",
@@ -120,8 +126,15 @@ export default {
     showOrHideOther: function() {
       this.showEndpoint = !this.showEndpoint;
     },
-    changeItemCountPerLine: function(itemCount) {
-      this.itemCountPerLine = itemCount;
+    changeItemCountPerLine: function(name) {
+      if (name == "increase" && this.itemCountPerLine < 10) {
+        this.itemCountPerLine += 1;
+      } else if (name == "decrease" && this.itemCountPerLine > 1) {
+        this.itemCountPerLine -= 1;
+      } else {
+        return;
+      }
+
       globalType.spinal.eventBus.$emit(
         "itemCountPerLineChange",
         this.itemCountPerLine
@@ -165,7 +178,7 @@ export default {
 <style>
 .endpointContainer {
   height: calc(50% - 20px) !important;
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid #58595b;
 }
 
 .endpointContainer
@@ -195,8 +208,15 @@ export default {
 .endpointContainer .endpoint_sidebar {
   width: 100%;
   height: 30px;
-  border: 1px solid red;
   margin-bottom: 5px;
   padding-top: 10px;
+}
+
+.lineCount {
+  width: 24px;
+  height: 24px;
+  background: #356bab;
+  text-align: center;
+  padding-top: 5px;
 }
 </style>

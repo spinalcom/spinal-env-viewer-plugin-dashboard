@@ -43,7 +43,6 @@ export default {
         Promise.all(promises).then(function(values) {
           for (var i = 0; i < values.length; i++) {
             _self.deviceList.push(information.getDeviceDetail(values[i]));
-            console.log(information.getDeviceDetail(values[i]));
           }
         });
       } else {
@@ -51,22 +50,5 @@ export default {
       }
     }
   }
-  // created() {
-  //   console.log("mounted");
-  //   var promises = [];
-
-  //   console.log("devices", this.devices);
-
-  //   for (var i = 0; i < this.devices.length; i++) {
-  //     promises.push(this.devices[i].getElement());
-  //   }
-
-  //   console.log(promises);
-
-  //   Promise.all(promises).then(function(values) {
-  //     console.log("values", values);
-  //     this.deviceList = values;
-  //   });
-  // }
 };
 </script>

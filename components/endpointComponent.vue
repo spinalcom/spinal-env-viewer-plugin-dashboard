@@ -1,10 +1,10 @@
 <template>
 
   <md-content class="endpointContent"
-              :class="{selected: isEndpointSelected(), three_item : itemCount == 3, four_item : itemCount == 4 , five_item : itemCount == 5, six_item :itemCount == 6}"
-
+              :class="{selected: isEndpointSelected()}"
+              :style="divStyle"
               @click="selectEndpoint">
-
+    <!-- one_item : itemCount == 1,two_item : itemCount == 2,three_item : itemCount == 3, four_item : itemCount == 4 , five_item : itemCount == 5, six_item :itemCount == 6 -->
     <div v-if="endpoint"
          :class="{endpoint_boolean : isBoolean(), endpoint_string : !isBoolean()}">
       <div class="name"
@@ -42,13 +42,18 @@ export default {
       itemCount: 3
     };
   },
+  computed: {
+    divStyle() {
+      return {
+        width: "calc((100% /" + this.itemCount + ") - 24px)"
+      };
+    }
+  },
   methods: {
     selectEndpoint: function() {
       this.$emit("selectEndpoint", this.endpointNode);
     },
-    editEndpoint: function() {
-      console.log("hello world");
-    },
+    editEndpoint: function() {},
     getEndpoints: function() {
       var _self = this;
 
@@ -66,8 +71,8 @@ export default {
                     _self.endpoint.min -
                     _self.endpoint.currentValue
                 ],
-                backgroundColor: ["#FF6384", "#DCDCDC"],
-                hoverBackgroundColor: ["#FF6384", "#DCDCDC"]
+                backgroundColor: ["#356bab", "#58595b"],
+                hoverBackgroundColor: ["#356bab", "#58595b"]
               }
             ]
           };
@@ -162,33 +167,41 @@ export default {
   background: #242424;
 }
 
+.md-content .endpointContent.one_item {
+  width: calc(100% - 24px);
+}
+
+.md-content .endpointContent.two_item {
+  width: calc((100% / 2) - 24px);
+}
+
 .md-content .endpointContent.three_item {
-  width: calc(100% / 3);
+  width: calc((100% / 3) - 24px);
 }
 
 .md-content .endpointContent.four_item {
-  width: calc(100% / 4);
+  width: calc((100% / 4) - 24px);
 }
 
 .md-content .endpointContent.five_item {
-  width: calc(100% / 5);
+  width: calc((100% / 5) - 24px);
 }
 
 .md-content .endpointContent.six_item {
-  width: calc(100% / 6);
+  width: calc((100% / 6) - 24px);
 }
 
 .md-content .selected {
-  background: #0097ef;
+  background: #356bab;
 }
 
 .md-content .endpointContent:hover {
-  background: gray;
+  background: #58595b;
   cursor: pointer;
 }
 
 .md-content .selected:hover {
-  background: #0097ef;
+  background: #356bab;
 }
 
 .md-content .endpointContent .endpoint_name {
@@ -229,7 +242,7 @@ export default {
   height: 80%;
   min-height: 20px;
   font-size: 17px;
-  color: #f87979;
+  color: #f68204;
   align-items: center;
   padding-top: 8px;
   text-align: center;
@@ -245,7 +258,7 @@ export default {
   height: 70%;
   min-height: 20px;
   font-size: 12px;
-  color: #f87979;
+  color: #f68204;
   align-items: center;
   padding-top: 8px;
   text-align: center;
@@ -257,10 +270,10 @@ export default {
 }
 
 .md-content .endpointContent .trueValue {
-  background: green;
+  background: #31c64b;
 }
 
 .md-content .endpointContent .falseValue {
-  background: red;
+  background: #ff4d3f;
 }
 </style>

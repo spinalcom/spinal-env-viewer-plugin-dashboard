@@ -2,8 +2,9 @@
 
   <md-content>
 
-    <md-toolbar class="md-dense md-primary"
-                style="min-height : 20px; height : 20px; padding-right: 0px;">
+    <md-toolbar class="md-dense"
+                style="min-height : 30px; height : 30px; padding-right: 10px; 
+                background: #356bab">
       <h3 class="md-title"
           style="flex: 1">{{endPointGroupName}}</h3>
       <md-button class="md-icon-button md-dense"
@@ -17,7 +18,8 @@
       </md-button>
     </md-toolbar>
 
-    <div v-if="show">
+    <div class="_endpoint_div_content"
+         v-if="show">
       <endpoint-component v-for="endpoint in endPointGroups"
                           :key="endpoint._server_id"
                           :endpointNode="endpoint"

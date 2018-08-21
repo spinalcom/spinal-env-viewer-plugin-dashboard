@@ -14,9 +14,15 @@ export default {
   },
   watch: {
     data: function() {
+      if (this.$data._chart) {
+        this.$data._chart.destroy();
+      }
       this.renderChart(this.data, this.options);
     },
     options: function() {
+      if (this.$data._chart) {
+        this.$data._chart.destroy();
+      }
       this.renderChart(this.data, this.options);
     }
   }

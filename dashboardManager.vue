@@ -4,6 +4,7 @@
 
     <endpoint-global-component @select_endpoint="on_item_selected"
                                :deviceNode="deviceNodes"
+                               :severalEndpoints="severalEndpoints"
                                :appName="appName"
                                :endpointSelected="endpointSelected"></endpoint-global-component>
 
@@ -32,7 +33,8 @@ export default {
       deviceNodes: null,
       appName: null,
       endpointSelected: null,
-      bimObjectSelected: null
+      bimObjectSelected: null,
+      severalEndpoints: null
     };
   },
   components: { endpointGlobalComponent, graphComponent },
@@ -98,18 +100,38 @@ export default {
       );
       if (relations.length > 0) {
         let relation = relations[0];
-        let node = relation.getNodeList2()[0];
+        let node = relation.getNodeList2();
 
-        node.getElement().then(ele => {
-          if (
-            ele.constructor.name === "SpinalEndpoint" ||
-            ele.constructor.name === "SpinalDevice"
-          ) {
-            _self.appName = "smartConnector";
-            _self.deviceNodes = node;
-            _self.openClosePanel();
+        if (node.length > 1) {
+          _self.deviceNodes = null;
+          _self.severalEndpoints = [];
+          _self.appName = "smartConnector";
+
+          for (var i = 0; i < node.length; i++) {
+            node[i].getElement().then(el => {
+              if (
+                el.constructor.name === "SpinalEndpoint" ||
+                el.constructor.name === "SpinalDevice"
+              ) {
+                _self.severalEndpoints.push(node[i]);
+              }
+            });
           }
-        });
+        } else {
+          var t = node[0];
+          t.getElement().then(ele => {
+            if (
+              ele.constructor.name === "SpinalEndpoint" ||
+              ele.constructor.name === "SpinalDevice"
+            ) {
+              _self.appName = "smartConnector";
+              _self.deviceNodes = t;
+              _self.severalEndpoints = null;
+            }
+          });
+        }
+
+        _self.openClosePanel();
       } else {
         alert("no relation found !");
       }

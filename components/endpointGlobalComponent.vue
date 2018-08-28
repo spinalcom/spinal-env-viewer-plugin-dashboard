@@ -85,7 +85,7 @@ var getInfoInstance = new getInfo.GetInformation();
 export default {
   name: "endpointGlobalComponent",
   components: { endpointComponent, endpointGroup },
-  props: ["deviceNode", "appName", "endpointSelected"],
+  props: ["deviceNode", "appName", "endpointSelected", "severalEndpoints"],
   data() {
     return {
       endpoints: [],
@@ -120,7 +120,7 @@ export default {
     deviceNode: function(newDeviceNode) {
       var _self = this;
 
-      if (typeof newDeviceNode != "undefined") {
+      if (typeof newDeviceNode != "undefined" && newDeviceNode != null) {
         this.deviceNode.getElement().then(m => {
           var type = m.constructor.name;
 
@@ -143,6 +143,47 @@ export default {
             _self.endPointsGroupNodes = [this.deviceNode];
           }
         });
+      }
+    },
+    severalEndpoints: function(newSeveralEndpoints) {
+      var _self = this;
+
+      console.log("severalEndpoints", this.severalEndpoints);
+
+      if (
+        typeof newSeveralEndpoints != "undefined" &&
+        newSeveralEndpoints != null
+      ) {
+        for (var i = 0; i < this.severalEndpoints.length; i++) {
+          if (this.severalEndpoints[i]) {
+            this.severalEndpoints[i].getElement().then(el => {
+              var type = el.constructor.name;
+
+              if (type == "SpinalDevice") {
+                //Si spinalDevice
+                _self.endpoints.concat(
+                  _self.severalEndpoints[i].getChildrenByAppByRelation(
+                    _self.appName,
+                    "hasEndpoint"
+                  )
+                );
+
+                _self.endPointsGroupNodes.concat(
+                  _self.severalEndpoints[i].getChildrenByAppByRelation(
+                    _self.appName,
+                    "hasEndpointGroup"
+                  )
+                );
+              } else if (type == "SpinalEndpoint") {
+                //si endpoint
+                _self.endpoints.concat([_self.severalEndpoints[i]]);
+              } else if (type == "SpinalEndpointGroup") {
+                //si endpointGroup
+                _self.endPointsGroupNodes.concat([this.severalEndpoints[i]]);
+              }
+            });
+          }
+        }
       }
     }
   }

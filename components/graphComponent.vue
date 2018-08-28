@@ -4,11 +4,11 @@
          md-theme="selection-orange">
       <div class="titleText">{{endpointS}}</div>
       <div class="titlebtn">
-        <md-button v-if="endpointSelected"
+        <!-- <md-button v-if="endpointSelected"
                    title="edit"
                    class="md-icon-button md-dense">
           <md-icon>edit</md-icon>
-        </md-button>
+        </md-button> -->
       </div>
     </div>
 

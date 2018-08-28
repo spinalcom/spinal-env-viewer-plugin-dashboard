@@ -24,31 +24,6 @@
         <div class="lineCount">
           {{itemCountPerLine}}
         </div>
-
-        <!-- <md-menu md-size="small">
-          <md-button md-menu-trigger>
-            {{itemCountPerLine}}
-            <md-icon>keyboard_arrow_down</md-icon>
-          </md-button>
-
-          <md-menu-content>
-            <md-menu-item style="text-align: center"
-                          @click="changeItemCountPerLine(1)">&nbsp;1</md-menu-item>
-
-            <md-menu-item style="text-align: center"
-                          @click="changeItemCountPerLine(2)">&nbsp;2</md-menu-item>
-
-            <md-menu-item style="text-align: center"
-                          @click="changeItemCountPerLine(3)">&nbsp;3</md-menu-item>
-
-            <md-menu-item style="text-align: center"
-                          @click="changeItemCountPerLine(4)">&nbsp;4</md-menu-item>
-            <md-menu-item style="text-align: center"
-                          @click="changeItemCountPerLine(5)">&nbsp;5</md-menu-item>
-            <md-menu-item style="text-align: center"
-                          @click="changeItemCountPerLine(6)">&nbsp;6</md-menu-item>
-          </md-menu-content>
-        </md-menu> -->
       </md-list-item>
     </md-list>
 

@@ -74,6 +74,7 @@ export default {
       });
 
       EventBus.$on("getNodeClick", el => {
+        console.log(el);
         _self.bimObjectSelected = el;
       });
     },
@@ -89,6 +90,8 @@ export default {
       }, 500);
     },
     selectBimObject() {
+      var _self = this;
+
       let relations = this.bimObjectSelected.getRelationsByAppNameByType(
         "linker",
         "link"
@@ -96,6 +99,7 @@ export default {
       if (relations.length > 0) {
         let relation = relations[0];
         let node = relation.getNodeList2()[0];
+
         node.getElement().then(ele => {
           if (
             ele.constructor.name === "SpinalEndpoint" ||

@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/spinalcom/spinal-env-viewer-plugin-dashboard#readme",
   "description": "",
+  "dependences": {
+    "spinal-env-viewer-plugin-apps": "https://github.com/spinalcom/spinal-env-viewer-plugin-apps.git"
+  },
   "devDependencies": {
     "babel-core": "^6.0.0",
     "babel-plugin-transform-runtime": "^6.23.0",

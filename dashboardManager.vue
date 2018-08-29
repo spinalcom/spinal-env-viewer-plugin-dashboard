@@ -39,6 +39,17 @@ export default {
   },
   components: { endpointGlobalComponent, graphComponent },
   methods: {
+    getNodeItem: function(nodeI) {
+      nodeI.getElement().then(el => {
+        console.log("constructor", el.constructor.name);
+        if (
+          el.constructor.name === "SpinalEndpoint" ||
+          el.constructor.name === "SpinalDevice"
+        ) {
+          this.severalEndpoints.push(nodeI);
+        }
+      });
+    },
     test: function() {
       console.log(this.deviceNodes);
     },
@@ -79,6 +90,11 @@ export default {
         console.log(el);
         _self.bimObjectSelected = el;
       });
+
+      EventBus.$on("dashBoardBimObject", el => {
+        _self.bimObjectSelected = el;
+        _self.selectBimObject();
+      });
     },
     linkToDB: function() {
       let interval = setInterval(() => {
@@ -99,8 +115,8 @@ export default {
         "link"
       );
       if (relations.length > 0) {
-        let relation = relations[0];
-        let node = relation.getNodeList2();
+        var relation = relations[0];
+        var node = relation.getNodeList2();
 
         if (node.length > 1) {
           _self.deviceNodes = null;
@@ -108,14 +124,8 @@ export default {
           _self.appName = "smartConnector";
 
           for (var i = 0; i < node.length; i++) {
-            node[i].getElement().then(el => {
-              if (
-                el.constructor.name === "SpinalEndpoint" ||
-                el.constructor.name === "SpinalDevice"
-              ) {
-                _self.severalEndpoints.push(node[i]);
-              }
-            });
+            var x = node[i];
+            this.getNodeItem(x);
           }
         } else {
           var t = node[0];

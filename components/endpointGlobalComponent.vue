@@ -114,6 +114,42 @@ export default {
         "itemCountPerLineChange",
         this.itemCountPerLine
       );
+    },
+    getEndpointsNode: function(current_endpoint) {
+      var _self = this;
+      current_endpoint.getElement().then(el => {
+        var type = el.constructor.name;
+
+        if (type == "SpinalDevice") {
+          console.log("it is a device");
+          //Si spinalDevice
+
+          console.log("current_endpoint", current_endpoint);
+
+          _self.endpoints = _self.endpoints.concat(
+            current_endpoint.getChildrenByAppByRelation(
+              _self.appName,
+              "hasEndpoint"
+            )
+          );
+
+          _self.endPointsGroupNodes = _self.endPointsGroupNodes.concat(
+            current_endpoint.getChildrenByAppByRelation(
+              _self.appName,
+              "hasEndpointGroup"
+            )
+          );
+        } else if (type == "SpinalEndpoint") {
+          //si endpoint
+          console.log("it is an endpoint", current_endpoint);
+
+          _self.endpoints.push(current_endpoint);
+        } else if (type == "SpinalEndpointGroup") {
+          console.log("it is an endpointGroup");
+          //si endpointGroup
+          _self.endPointsGroupNodes.concat([current_endpoint]);
+        }
+      });
     }
   },
   watch: {
@@ -149,39 +185,20 @@ export default {
       var _self = this;
 
       console.log("severalEndpoints", this.severalEndpoints);
+      console.log("newSeveralEndpoints", newSeveralEndpoints);
 
       if (
         typeof newSeveralEndpoints != "undefined" &&
         newSeveralEndpoints != null
       ) {
+        this.endpoints = [];
+        this.endPointsGroupNodes = [];
+
         for (var i = 0; i < this.severalEndpoints.length; i++) {
-          if (this.severalEndpoints[i]) {
-            this.severalEndpoints[i].getElement().then(el => {
-              var type = el.constructor.name;
+          var current_endpoint = this.severalEndpoints[i];
 
-              if (type == "SpinalDevice") {
-                //Si spinalDevice
-                _self.endpoints.concat(
-                  _self.severalEndpoints[i].getChildrenByAppByRelation(
-                    _self.appName,
-                    "hasEndpoint"
-                  )
-                );
-
-                _self.endPointsGroupNodes.concat(
-                  _self.severalEndpoints[i].getChildrenByAppByRelation(
-                    _self.appName,
-                    "hasEndpointGroup"
-                  )
-                );
-              } else if (type == "SpinalEndpoint") {
-                //si endpoint
-                _self.endpoints.concat([_self.severalEndpoints[i]]);
-              } else if (type == "SpinalEndpointGroup") {
-                //si endpointGroup
-                _self.endPointsGroupNodes.concat([this.severalEndpoints[i]]);
-              }
-            });
+          if (current_endpoint) {
+            this.getEndpointsNode(current_endpoint);
           }
         }
       }

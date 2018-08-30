@@ -14,7 +14,7 @@
       <div class="value"
            :title="endpoint.currentValue"
            :class="{falseValue : !booleanTrueOrFalse() && isBoolean()  , trueValue : booleanTrueOrFalse() && isBoolean()}">
-        {{endpoint.currentValue }}
+        {{formatCurrentValue(endpoint.currentValue) }}
       </div>
     </div>
 
@@ -119,16 +119,22 @@ export default {
     },
 
     booleanTrueOrFalse: function() {
-      if (
-        this.endpoint.currentValue == "1" ||
-        this.endpoint.currentValue.toUpperCase() == "TRUE"
-      ) {
-        return true;
-      } else if (
-        this.endpoint.currentValue == "0" ||
-        this.endpoint.currentValue.toUpperCase() == "FALSE"
-      ) {
-        return false;
+      if (this.isBoolean()) {
+        if (this.endpoint.currentValue === 1) {
+          return true;
+        } else if (this.endpoint.currentValue === 0) {
+          return false;
+        } else if (
+          this.endpoint.currentValue === "1" ||
+          this.endpoint.currentValue.toUpperCase() == "TRUE"
+        ) {
+          return true;
+        } else if (
+          this.endpoint.currentValue === "0" ||
+          this.endpoint.currentValue.toUpperCase() == "FALSE"
+        ) {
+          return false;
+        }
       }
     },
     isBoolean: function() {
@@ -136,6 +142,16 @@ export default {
         return true;
       }
       return false;
+    },
+    formatCurrentValue: function(argCurrentValue) {
+      var argCurrentValueNumber = Number(argCurrentValue);
+
+      if (
+        !isNaN(argCurrentValueNumber) &&
+        !Number.isInteger(argCurrentValueNumber)
+      )
+        return Number(argCurrentValue).toFixed(2);
+      return argCurrentValue;
     }
   },
   mounted() {

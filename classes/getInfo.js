@@ -24,10 +24,21 @@ var GetInformation = class GetInformation extends Model {
     deviceCopy['max'] = device.max.get();
     deviceCopy['dataNature'] = device.dataNature.get();
     deviceCopy['unit'] = device.unit.get();
-    deviceCopy['currentValue'] = device.currentValue.get();
+
     // deviceCopy['type'] = typeof device.currentValue.get();
     deviceCopy['type'] = device.dataType.get() ? device.dataType.get() :
       "string";
+
+    if (deviceCopy['type'] != "string" && isNaN(device.currentValue.get())) {
+      deviceCopy["currentValue"] = "Not defined"
+    } else {
+      deviceCopy["currentValue"] = device
+        .currentValue
+        .get()
+    }
+
+    // deviceCopy['currentValue'] = ! &&
+    //   deviceCopy['type'] != "string" ?  : "Not defined";
 
     return deviceCopy;
 

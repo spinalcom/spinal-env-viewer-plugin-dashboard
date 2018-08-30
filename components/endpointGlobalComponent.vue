@@ -210,7 +210,7 @@ export default {
 
 <style>
 .endpointContainer {
-  height: calc(50% - 20px) !important;
+  height: calc(70% - 20px) !important;
   border-bottom: 1px solid #58595b;
 }
 

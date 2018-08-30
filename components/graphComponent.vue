@@ -126,7 +126,7 @@ export default {
 <style>
 .graph {
   width: 100%;
-  height: calc(50% - 20px) !important;
+  height: calc(30% - 20px) !important;
 }
 
 .graph .title {

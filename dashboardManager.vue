@@ -70,6 +70,9 @@ export default {
         if (
           globalType.spinal.panelManager.panelsGroup.dashboard[0].isVisible()
         ) {
+          globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
+            "Dashboard : " + el.node.name.get()
+          );
           _self.appName = el.context.name.get();
           _self.deviceNodes = el.node;
         }
@@ -92,6 +95,9 @@ export default {
       });
 
       EventBus.$on("dashBoardBimObject", el => {
+        globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
+          "Dashboard : " + el.name.get()
+        );
         _self.bimObjectSelected = el;
         _self.selectBimObject();
       });

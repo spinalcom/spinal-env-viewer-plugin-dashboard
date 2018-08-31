@@ -23,7 +23,8 @@ var GetInformation = class GetInformation extends Model {
     deviceCopy['min'] = device.min.get();
     deviceCopy['max'] = device.max.get();
     deviceCopy['dataNature'] = device.dataNature.get();
-    deviceCopy['unit'] = device.unit.get();
+    deviceCopy['unit'] = (device.unit.get() && device.unit.get().trim().length >
+      0 && device.unit.get() != "none") ? device.unit.get() : "-";
 
     // deviceCopy['type'] = typeof device.currentValue.get();
     deviceCopy['type'] = device.dataType.get() ? device.dataType.get() :

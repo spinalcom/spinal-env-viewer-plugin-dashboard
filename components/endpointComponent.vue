@@ -14,7 +14,8 @@
       <div class="value"
            :title="endpoint.currentValue"
            :class="{falseValue : !booleanTrueOrFalse() && isBoolean()  , trueValue : booleanTrueOrFalse() && isBoolean()}">
-        {{formatCurrentValue(endpoint.currentValue) }}
+        <div class="currentValue">{{formatCurrentValue(endpoint.currentValue) }}</div>
+        <div class="currentUnit">{{endpoint.unit}}</div>
       </div>
     </div>
 
@@ -183,30 +184,6 @@ export default {
   background: #242424;
 }
 
-.md-content .endpointContent.one_item {
-  width: calc(100% - 24px);
-}
-
-.md-content .endpointContent.two_item {
-  width: calc((100% / 2) - 24px);
-}
-
-.md-content .endpointContent.three_item {
-  width: calc((100% / 3) - 24px);
-}
-
-.md-content .endpointContent.four_item {
-  width: calc((100% / 4) - 24px);
-}
-
-.md-content .endpointContent.five_item {
-  width: calc((100% / 5) - 24px);
-}
-
-.md-content .endpointContent.six_item {
-  width: calc((100% / 6) - 24px);
-}
-
 .md-content .selected {
   background: #356bab;
 }
@@ -257,7 +234,6 @@ export default {
   width: 100%;
   height: 80%;
   min-height: 20px;
-  font-size: 17px;
   color: #f68204;
   align-items: center;
   padding-top: 8px;
@@ -266,30 +242,49 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  line-height: 3;
 }
 
 .md-content .endpointContent .endpoint_boolean .value {
   width: 100%;
   height: 70%;
   min-height: 20px;
-  font-size: 12px;
   color: #f68204;
   align-items: center;
   padding-top: 8px;
   text-align: center;
   text-transform: uppercase;
+}
+
+.md-content .endpointContent .endpoint_boolean .value .currentValue,
+.md-content .endpointContent .endpoint_boolean .value .currentUnit,
+.md-content .endpointContent .endpoint_string .value .currentValue,
+.md-content .endpointContent .endpoint_string .value .currentUnit {
+  width: 100%;
+  height: 50%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  line-height: 5;
+}
+
+.md-content .endpointContent .endpoint_boolean .value .currentValue,
+.md-content .endpointContent .endpoint_string .value .currentValue {
+  font-size: 25px;
+  padding-top: inherit;
+}
+
+.md-content .endpointContent .endpoint_boolean .value .currentUnit,
+.md-content .endpointContent .endpoint_string .value .currentUnit {
+  text-align: right;
+  font-size: 10px;
 }
 
 .md-content .endpointContent .trueValue {
+  color: black !important;
   background: #31c64b;
 }
 
 .md-content .endpointContent .falseValue {
+  color: black !important;
   background: #ff4d3f;
 }
 </style>

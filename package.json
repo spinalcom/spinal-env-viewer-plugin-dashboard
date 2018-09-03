@@ -55,5 +55,9 @@
       "babelify",
       "imgurify"
     ]
+  },
+  "dependencies": {
+    "@statnett/vue-plotly": "^0.2.0",
+    "plotly.js": "^1.40.1"
   }
 }

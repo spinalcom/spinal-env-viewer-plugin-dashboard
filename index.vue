@@ -12,11 +12,19 @@ const ButtonLabel1 = "dashboard";
 const ButtonIcon1 = "configuration";
 var itemSelected;
 
+/*****
+ *
+ * Info Panel DashBoard Graph
+ *
+ */
+const graphPanelTitle = "Graph";
+
 const classExtention = class {
   constructor(viewer, options) {
     Autodesk.Viewing.Extension.call(this, viewer, options);
     this.viewer = viewer;
     this.panel1 = null;
+    this.graphpanel = null;
   }
   load() {
     if (this.viewer.toolbar) {

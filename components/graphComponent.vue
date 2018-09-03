@@ -13,9 +13,12 @@
     </div>
 
     <div class="chart">
-      <line-chart-component style="width : calc(100% - 10px); height : 100%"
+      <!-- <line-chart-component style="width : calc(100% - 10px); height : 100%"
                             :data="chartData"
-                            :options="chartOptions"></line-chart-component>
+                            :options="chartOptions"></line-chart-component> -->
+
+      <plotly-component :graph_data="chartData"></plotly-component>
+
     </div>
 
     <!-- <div class="chart"
@@ -30,10 +33,11 @@
 <script>
 // var appName = "smartConnector";
 import lineChartComponent from "./lineChartComponent.vue";
+import plotlyComponent from "./plotlyComponent.vue";
 
 export default {
   name: "graphComponent",
-  components: { lineChartComponent },
+  components: { lineChartComponent, plotlyComponent },
   props: ["endpointSelected", "appName"],
   data() {
     return {
@@ -45,7 +49,7 @@ export default {
   },
   methods: {
     updateData: function() {
-      this.chartData.datasets[0].data = this.dataLst.get();
+      this.chartData = this.dataLst.get();
     }
   },
   computed: {
@@ -71,37 +75,38 @@ export default {
           .getNodeList2()[0]
           .getElement()
           .then(el => {
-            el.history.bind(this.updateData);
             this.dataLst = el.history;
-            _self.chartData = {
-              labels: [],
-              datasets: [
-                {
-                  label: "Courbe",
-                  data: el.history.get(),
-                  backgroundColor: "#356bab"
-                }
-              ]
-            };
+            el.history.bind(this.updateData);
 
-            for (var i = 0; i < el.windowSize.get(); i++) {
-              _self.chartData.labels.push(i.toString());
-            }
+            // _self.chartData = {
+            //   labels: [],
+            //   datasets: [
+            //     {
+            //       label: "Courbe",
+            //       data: el.history.get(),
+            //       backgroundColor: "#356bab"
+            //     }
+            //   ]
+            // };
 
-            _self.chartOptions = {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                yAxes: [
-                  {
-                    stacked: true
-                  }
-                ]
-              },
-              legend: {
-                display: false
-              }
-            };
+            // for (var i = 0; i < el.windowSize.get(); i++) {
+            //   _self.chartData.labels.push(i.toString());
+            // }
+
+            // _self.chartOptions = {
+            //   responsive: true,
+            //   maintainAspectRatio: false,
+            //   scales: {
+            //     yAxes: [
+            //       {
+            //         stacked: true
+            //       }
+            //     ]
+            //   },
+            //   legend: {
+            //     display: false
+            //   }
+            // };
           });
       } else {
         // _self.chartData = {
@@ -126,7 +131,7 @@ export default {
 <style>
 .graph {
   width: 100%;
-  height: calc(30% - 20px) !important;
+  height: 30% !important;
 }
 
 .graph .title {
@@ -151,7 +156,7 @@ export default {
 
 .graph .chart {
   width: 100% !important;
-  height: calc(100% - 20% - 15px) !important;
-  padding: 5px;
+  height: 80% !important;
+  padding-top: 3px;
 }
 </style>

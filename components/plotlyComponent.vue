@@ -1,7 +1,10 @@
 
 <template>
-  <md-content id="plot_graph">
-    <!-- <div id="plotlyGraph"></div> -->
+  <md-content class="graphContainer">
+    <md-content class="graphDetail">
+      <div class="endpointName">{{name}}</div>
+    </md-content>
+    <md-content id="plotGraph"></md-content>
   </md-content>
 
 </template>
@@ -9,7 +12,8 @@
 
 <script>
 // require("../classes/plotly.min.js");
-
+const globalType = typeof window === "undefined" ? global : window;
+var appName = "smartConnector";
 export default {
   name: "plotlyComponent",
   props: ["graph_data"],
@@ -17,9 +21,9 @@ export default {
     this.layout = {
       margin: {
         l: 50,
-        r: 10,
+        r: 20,
         b: 25,
-        t: 5,
+        t: 8,
         pad: 4
       },
       font: {
@@ -33,7 +37,7 @@ export default {
         y: this.graph_data ? this.graph_data : [],
         x: this.getXData(),
         marker: {
-          color: "#C8A2C8",
+          color: "#356BAB",
           line: {
             width: 2.5
           }
@@ -42,12 +46,18 @@ export default {
     ];
     this._graph_ = null;
 
-    return {};
+    return {
+      name: ""
+    };
   },
   mounted() {
+    this.getEvents();
     this._graph_ = this.createGraph();
 
-    Plotly.plot(this._graph_.gd, this.chartData, this.layout);
+    Plotly.plot(this._graph_.gd, this.chartData, this.layout, {
+      modeBarButtonsToRemove: ["sendDataToCloud"],
+      displaylogo: false
+    });
 
     setInterval(() => {
       this.resize(this._graph_.gd, this._graph_.gd3);
@@ -61,7 +71,7 @@ export default {
       var graphWidth = 100,
         graphHeight = 100;
 
-      var gd3 = d3.select(document.getElementById("plot_graph")).style({
+      var gd3 = d3.select(document.getElementById("plotGraph")).style({
         width: graphWidth + "%",
         height: graphHeight + "%"
       });
@@ -78,7 +88,14 @@ export default {
 
       Plotly.Plots.resize(gd);
     },
+    openGraphPanel: function() {
+      var graphPanel =
+        globalType.spinal.panelManager.panelsGroup.graphPanelClass[0];
 
+      if (!graphPanel.isVisible()) {
+        graphPanel.setVisible(true);
+      }
+    },
     getXData: function() {
       var x = [];
       if (this.graph_data) {
@@ -87,6 +104,28 @@ export default {
         }
       }
       return x;
+    },
+    getEvents: function() {
+      globalType.spinal.eventBus.$on("seeGraphPanel", el => {
+        this.name = el.name.get();
+
+        var historyValue = el.getRelationsByAppNameByType(
+          appName,
+          "hasHistory"
+        )[0];
+
+        if (historyValue) {
+          historyValue
+            .getNodeList2()[0]
+            .getElement()
+            .then(el => {
+              el.history.bind(() => {
+                this.graph_data = el.history.get();
+              });
+            });
+        }
+        this.openGraphPanel();
+      });
     }
   },
   watch: {
@@ -100,8 +139,26 @@ export default {
 </script>
 
 <style>
-#plot_graph {
+.graphContainer {
   width: 100% !important;
-  height: 100% !important;
+  height: calc(100% - 50px) !important;
+}
+
+#plotGraph {
+  width: 100% !important;
+  height: 80% !important;
+}
+
+.graphDetail {
+  width: 100% !important;
+  height: 20% !important;
+}
+
+.endpointName {
+  text-align: center;
+  width: 100%;
+  height: 40%;
+  padding-top: 8px;
+  font-size: 20px;
 }
 </style>

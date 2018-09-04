@@ -8,8 +8,8 @@
                                :appName="appName"
                                :endpointSelected="endpointSelected"></endpoint-global-component>
 
-    <graph-component :endpointSelected="endpointSelected"
-                     :appName="appName"></graph-component>
+    <!-- <graph-component :endpointSelected="endpointSelected"
+                     :appName="appName"></graph-component> -->
 
   </div>
 </template>

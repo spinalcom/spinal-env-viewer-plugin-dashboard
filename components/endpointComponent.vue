@@ -17,6 +17,22 @@
         <div class="currentValue">{{formatCurrentValue(endpoint.currentValue) }}</div>
         <div class="currentUnit">{{endpoint.unit}}</div>
       </div>
+      <div class="btnGroup">
+        <md-button class="md-icon-button md-dense"
+                   title="open Graph Panel"
+                   @click="openGraphPanel">
+          <md-icon>pie_chart</md-icon>
+        </md-button>
+
+        <md-button v-if="displayAlarmIcon()"
+                   :class="{alarmMode : alarmMode}"
+                   @click="activeAlarmMode"
+                   class="md-icon-button md-dense"
+                   title="Alarm">
+          <md-icon>error_outline</md-icon>
+        </md-button>
+
+      </div>
     </div>
 
   </md-content>
@@ -29,7 +45,7 @@ const globalType = typeof window === "undefined" ? global : window;
 import chartComponent from "./chartComponent.vue";
 var getInfo = require("../classes/getInfo.js");
 var getInfoInstance = new getInfo.GetInformation();
-
+var viewer;
 export default {
   name: "endpointComponent",
   components: { chartComponent },
@@ -40,7 +56,11 @@ export default {
       chartData: null,
       chartOptions: null,
       mouseOver: false,
-      itemCount: 3
+      itemCount: 3,
+      alarmMode: false,
+      delay: 500,
+      clicks: 0,
+      timer: null
     };
   },
   computed: {
@@ -51,7 +71,22 @@ export default {
     }
   },
   methods: {
+    getDbids: async function(node, app) {
+      let res = [];
+      let element = await node.getElement();
+      if (element.constructor.name === "BIMElement") {
+        res = res.concat(element.id.get());
+      } else if (node.hasChildren()) {
+        let childrenNodes = node.getChildrenByApp(app);
+        for (let index = 0; index < childrenNodes.length; index++) {
+          const childNode = childrenNodes[index];
+          res = res.concat(await this.getDbids(childNode, app));
+        }
+      }
+      return res;
+    },
     selectEndpoint: function() {
+      console.log("this.endpointNode", this.endpointNode);
       this.$emit("selectEndpoint", this.endpointNode);
     },
     editEndpoint: function() {},
@@ -109,7 +144,6 @@ export default {
         });
       });
     },
-
     isEndpointSelected: function() {
       if (this.endpointNode && this.endpointSelected) {
         if (this.endpointNode.id.get() == this.endpointSelected.id.get()) {
@@ -118,7 +152,6 @@ export default {
       }
       return false;
     },
-
     booleanTrueOrFalse: function() {
       if (this.isBoolean()) {
         if (this.endpoint.currentValue === 1) {
@@ -153,6 +186,78 @@ export default {
       )
         return Number(argCurrentValue).toFixed(2);
       return argCurrentValue;
+    },
+    openGraphPanel: function() {
+      globalType.spinal.eventBus.$emit("seeGraphPanel", this.endpointNode);
+    },
+    displayAlarmIcon: function() {
+      var relations = this.endpointNode.getRelationsByAppNameByType(
+        "linker",
+        "link"
+      );
+
+      if (relations.length > 0) {
+        return true;
+      }
+      return false;
+    },
+    activeAlarmMode: function() {
+      this.clicks++;
+      this.alarmMode = !this.alarmMode;
+
+      var allBimOjects = [];
+
+      var relations = this.endpointNode.getRelationsByAppNameByType(
+        "linker",
+        "link"
+      );
+
+      for (var i = 0; i < relations.length; i++) {
+        console.log(i);
+        allBimOjects = allBimOjects.concat(
+          this.getDbids(relations[i].nodeList1[0], "linker")
+        );
+      }
+
+      if (this.clicks === 1) {
+        this.timer = setTimeout(() => {
+          if (this.alarmMode) {
+            Promise.all(allBimOjects).then(el => {
+              var x = [];
+              for (var i = 0; i < el.length; i++) {
+                x = x.concat(el[i]);
+              }
+
+              viewer.setColorMaterial(x, "#FF4D3F", "1234");
+            });
+          } else {
+            Promise.all(allBimOjects).then(el => {
+              var x = [];
+              for (var i = 0; i < el.length; i++) {
+                x = x.concat(el[i]);
+              }
+
+              viewer.restoreColorMaterial(x, "1234");
+            });
+          }
+
+          this.clicks = 0;
+        }, this.delay);
+      } else {
+        clearTimeout(this.timer);
+        Promise.all(allBimOjects).then(el => {
+          var x = [];
+          for (var i = 0; i < el.length; i++) {
+            x = x.concat(el[i]);
+          }
+          if (!this.alarmMode) {
+            this.alarmMode = !this.alarmMode;
+            viewer.setColorMaterial(x, "#FF4D3F", "1234");
+          }
+          viewer.fitToView(x);
+        });
+        this.clicks = 0;
+      }
     }
   },
   mounted() {
@@ -160,6 +265,8 @@ export default {
     if (this.endpointNode) {
       this.getEndpoints();
     }
+
+    viewer = globalType.v;
 
     globalType.spinal.eventBus.$on("itemCountPerLineChange", el => {
       _self.itemCount = el;
@@ -176,7 +283,7 @@ export default {
 <style scoped>
 .md-content .endpointContent {
   /* width: 85px !important; */
-  height: 85px;
+  height: 130px;
   display: inline-block;
   justify-content: center;
   padding: 7px;
@@ -232,7 +339,7 @@ export default {
 
 .md-content .endpointContent .endpoint_string .value {
   width: 100%;
-  height: 80%;
+  height: 50%;
   min-height: 20px;
   color: #f68204;
   align-items: center;
@@ -246,13 +353,19 @@ export default {
 
 .md-content .endpointContent .endpoint_boolean .value {
   width: 100%;
-  height: 70%;
+  height: 50%;
   min-height: 20px;
   color: #f68204;
   align-items: center;
   padding-top: 8px;
   text-align: center;
   text-transform: uppercase;
+}
+
+.md-content .endpointContent .endpoint_boolean .btnGroup,
+.md-content .endpointContent .endpoint_string .btnGroup {
+  width: 100%;
+  height: 20%;
 }
 
 .md-content .endpointContent .endpoint_boolean .value .currentValue,
@@ -269,7 +382,7 @@ export default {
 .md-content .endpointContent .endpoint_boolean .value .currentValue,
 .md-content .endpointContent .endpoint_string .value .currentValue {
   font-size: 25px;
-  padding-top: inherit;
+  /* padding-top: inherit; */
 }
 
 .md-content .endpointContent .endpoint_boolean .value .currentUnit,
@@ -286,5 +399,9 @@ export default {
 .md-content .endpointContent .falseValue {
   color: black !important;
   background: #ff4d3f;
+}
+
+.alarmMode .md-icon {
+  color: #ff4d3f !important;
 }
 </style>

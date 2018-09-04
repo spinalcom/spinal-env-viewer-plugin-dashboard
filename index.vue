@@ -1,8 +1,11 @@
 <script>
 import Vue from "vue";
 import dashboardManager from "./dashboardManager.vue";
+import plotlyComponent from "./components/plotlyComponent.vue";
 
+const PlotlyComponent = Vue.extend(plotlyComponent);
 const ComponentCtor1 = Vue.extend(dashboardManager);
+
 const ClassName = "dashboard";
 const globalType = typeof window === "undefined" ? global : window;
 const spinalSystem = globalType.spinal.spinalSystem;
@@ -58,6 +61,14 @@ const classExtention = class {
     this.panel1.container.style.width = "40%";
     globalType.spinal.panelManager.registerPanel(this.panel1, ClassName);
 
+    this.graphpanel = new PanelClass(this.viewer, graphPanelTitle);
+    this.graphpanel.container.style.top = "30%";
+    this.graphpanel.container.style.width = "40%";
+    globalType.spinal.panelManager.registerPanel(
+      this.graphpanel,
+      "graphPanelClass"
+    );
+
     // var button1 = new Autodesk.Viewing.UI.Button(ButtonLabel1);
     // globalType.spinal.panelManager.registerButton(button1, ClassName);
     // button1.container.style.color = "red";
@@ -79,6 +90,16 @@ const classExtention = class {
     // this.panel1.container.classList.add("dashboard-panel");
     this.panel1.container.appendChild(_container1);
     new ComponentCtor1().$mount(_container1);
+
+    /***** GraphPanel Container */
+    var graphContainer = document.createElement("div");
+    graphContainer.ClassName = this.graphpanel.container.id + "-panelContainer";
+    graphContainer.style.height = "80% !important";
+    graphContainer.style.width = "400px";
+    graphContainer.style.overflowY = "auto";
+
+    this.graphpanel.container.appendChild(graphContainer);
+    new PlotlyComponent().$mount(graphContainer);
   }
 
   // openClosePanel() {

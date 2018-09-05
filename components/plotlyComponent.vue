@@ -16,7 +16,7 @@ const globalType = typeof window === "undefined" ? global : window;
 var appName = "smartConnector";
 export default {
   name: "plotlyComponent",
-  props: ["graph_data"],
+  props: ["graph_data", "graphXData"],
   data() {
     this.layout = {
       margin: {
@@ -27,19 +27,22 @@ export default {
         pad: 4
       },
       font: {
-        size: 16
-      }
+        size: 15,
+        color: "#FFFFFF"
+      },
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)"
     };
 
     this.chartData = [
       {
         type: "scatter",
         y: this.graph_data ? this.graph_data : [],
-        x: this.getXData(),
+        x: this.graphXData ? this.graphXData : [],
         marker: {
           color: "#356BAB",
           line: {
-            width: 2.5
+            width: 2
           }
         }
       }
@@ -121,6 +124,7 @@ export default {
             .then(el => {
               el.history.bind(() => {
                 this.graph_data = el.history.get();
+                this.graphXData = el.historyDate.get();
               });
             });
         }
@@ -131,7 +135,7 @@ export default {
   watch: {
     graph_data: function() {
       this.chartData[0].y = this.graph_data;
-      this.chartData[0].x = this.getXData();
+      this.chartData[0].x = this.graphXData;
       Plotly.react(this._graph_.gd, this.chartData, this.layout);
     }
   }

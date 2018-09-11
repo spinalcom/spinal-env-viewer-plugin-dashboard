@@ -122,30 +122,33 @@ export default {
       );
       if (relations.length > 0) {
         var relation = relations[0];
-        var node = relation.getNodeList2();
 
-        if (node.length > 1) {
-          _self.deviceNodes = null;
-          _self.severalEndpoints = [];
-          _self.appName = "smartConnector";
+        relation.bind(() => {
+          var node = relation.getNodeList2();
 
-          for (var i = 0; i < node.length; i++) {
-            var x = node[i];
-            this.getNodeItem(x);
-          }
-        } else {
-          var t = node[0];
-          t.getElement().then(ele => {
-            if (
-              ele.constructor.name === "SpinalEndpoint" ||
-              ele.constructor.name === "SpinalDevice"
-            ) {
-              _self.appName = "smartConnector";
-              _self.deviceNodes = t;
-              _self.severalEndpoints = null;
+          if (node.length > 1) {
+            _self.deviceNodes = null;
+            _self.severalEndpoints = [];
+            _self.appName = "smartConnector";
+
+            for (var i = 0; i < node.length; i++) {
+              var x = node[i];
+              this.getNodeItem(x);
             }
-          });
-        }
+          } else {
+            var t = node[0];
+            t.getElement().then(ele => {
+              if (
+                ele.constructor.name === "SpinalEndpoint" ||
+                ele.constructor.name === "SpinalDevice"
+              ) {
+                _self.appName = "smartConnector";
+                _self.deviceNodes = t;
+                _self.severalEndpoints = null;
+              }
+            });
+          }
+        });
 
         _self.openClosePanel();
       } else {

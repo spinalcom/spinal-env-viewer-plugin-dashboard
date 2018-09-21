@@ -2,7 +2,8 @@
 <template>
   <md-content class="graphContainer">
     <md-content class="graphDetail">
-      <div class="endpointName">{{name}}</div>
+      <div class="endpointName"
+           v-if="endpointSelected">{{endpointSelected.name.get()}}</div>
     </md-content>
     <md-content id="plotGraph"></md-content>
   </md-content>
@@ -31,7 +32,16 @@ export default {
         color: "#FFFFFF"
       },
       paper_bgcolor: "rgba(0,0,0,0)",
-      plot_bgcolor: "rgba(0,0,0,0)"
+      plot_bgcolor: "rgba(0,0,0,0)",
+      xaxis: {
+        showgrid: false,
+        showline: true
+      },
+      yaxis: {
+        showgrid: false,
+        showline: true
+      }
+      shapes: []
     };
 
     this.chartData = [
@@ -47,10 +57,20 @@ export default {
         }
       }
     ];
+
     this._graph_ = null;
 
+    this.seuilMin = null;
+    this.seuilMax = null;
+
+    this.endpointBind = null;
+    this.endPointModel = null;
+
+    this.historyBind = null;
+    this.historyModel = null;
+
     return {
-      name: ""
+      endpointSelected: null
     };
   },
   mounted() {
@@ -99,18 +119,59 @@ export default {
         graphPanel.setVisible(true);
       }
     },
-    getXData: function() {
-      var x = [];
-      if (this.graph_data) {
-        for (var i = 0; i < this.graph_data.length; i++) {
-          x.push(i);
-        }
-      }
-      return x;
-    },
+
     getEvents: function() {
       globalType.spinal.eventBus.$on("seeGraphPanel", el => {
-        this.name = el.name.get();
+        this.endpointSelected = el;
+        // this.name = el.name.get();
+
+        el.getElement().then(endpoint => {
+          console.log("endpointModel", endpoint);
+          if (this.endPointModel != endpoint) {
+            if (this.endPointModel != null) {
+              this.endPointModel.unbind(this.endpointBind);
+              console.log("EndpointUnBinded");
+            }
+
+            this.endPointModel = endpoint;
+
+            this.endpointBind = endpoint.bind(() => {
+              console.log("enPointBindCalled");
+              this.layout.shapes = [];
+
+              if (endpoint.seuilMin.active) {
+                this.layout.shapes.push({
+                  type: "line",
+                  y0: endpoint.seuilMin.value.get(),
+                  y1: endpoint.seuilMin.value.get(),
+                  x0: 0,
+                  x1: 4,
+                  line: {
+                    color: "red",
+                    width: 2.5
+                  }
+                });
+              }
+
+              if (endpoint.seuilMax.active) {
+                this.layout.shapes.push({
+                  type: "line",
+                  y0: endpoint.seuilMax.value.get(),
+                  y1: endpoint.seuilMax.value.get(),
+                  x0: 0,
+                  x1: 4,
+                  line: {
+                    color: "red",
+                    width: 2.5
+                  }
+                });
+              }
+
+              // this.seuilMin = endpoint.seuilMin.get();
+              // this.seuilMax = endpoint.seuilMax.get();
+            });
+          }
+        });
 
         var historyValue = el.getRelationsByAppNameByType(
           appName,
@@ -121,22 +182,118 @@ export default {
           historyValue
             .getNodeList2()[0]
             .getElement()
-            .then(el => {
-              el.history.bind(() => {
-                this.graph_data = el.history.get();
-                this.graphXData = el.historyDate.get();
+            .then(el2 => {
+              console.log("history", el2.history);
+              this.historyModel = el2.history;
+              this.historyBind = el2.history.bind(() => {
+                console.log("enPointHistoryBindCalled");
+
+                this.graph_data = el2.history.get();
+                this.graphXData = el2.historyDate.get();
               });
             });
         }
         this.openGraphPanel();
       });
     }
+    // getMaxData: function() {
+    //   var x = [];
+    //   if (this.graphXData) {
+    //     for (var i = 0; i < this.graphXData.length; i++) {
+    //       x.push(this.seuilMax.value);
+    //     }
+    //   }
+    //   return x;
+    // },
+    // getMinData: function() {
+    //   var x = [];
+    //   if (this.graphXData) {
+    //     for (var i = 0; i < this.graphXData.length; i++) {
+    //       x.push(this.seuilMin.value);
+    //     }
+    //   }
+    //   return x;
+    // }
+    // getGraphData(callback) {
+    //   this.chartData.push({
+    //     type: "scatter",
+    //     y: this.graph_data ? this.graph_data : [],
+    //     x: this.graphXData ? this.graphXData : [],
+    //     marker: {
+    //       color: "#356BAB",
+    //       line: {
+    //         width: 5
+    //       }
+    //     },
+    //     name: "value line"
+    //   });
+
+    //   if (this.seuilMin.active) {
+    //     this.chartData.push({
+    //       type: "scatter",
+    //       y: this.getMinData(),
+    //       x: this.graphXData ? this.graphXData : [],
+    //       marker: {
+    //         color: "#FF4D3F",
+    //         line: {
+    //           width: 5
+    //         }
+    //       },
+    //       name: "minimum threshold"
+    //     });
+    //   }
+
+    //   if (this.seuilMax.active) {
+    //     this.chartData.push({
+    //       type: "scatter",
+    //       y: this.getMaxData(),
+    //       x: this.graphXData ? this.graphXData : [],
+    //       marker: {
+    //         color: "#FF4D3F",
+    //         line: {
+    //           width: 5
+    //         }
+    //       },
+    //       name: "maximum threshold"
+    //     });
+    //   }
+    //   callback();
+    // }
   },
   watch: {
     graph_data: function() {
+      // this.chartData[0].y = this.graph_data;
+      // this.chartData[0].x = this.graphXData;
+      // this.chartData = [];
+
+      // this.getGraphData(() => {
+      //   Plotly.react(this._graph_.gd, this.chartData, this.layout);
+      // });
+
+      console.log("graphData change");
+
       this.chartData[0].y = this.graph_data;
       this.chartData[0].x = this.graphXData;
       Plotly.react(this._graph_.gd, this.chartData, this.layout);
+    },
+    endpointSelected: function(newEndpoint, oldEndpoint) {
+      if (oldEndpoint) {
+        if (this.historyModel != null)
+          this.historyModel.unbind(this.historyBind);
+      }
+    }
+  },
+  beforeDestroy() {
+    if (this.endPointModel != endpoint) {
+      if (this.endPointModel != null) {
+        his.endPointModel.unbind(this.endpointBind);
+        console.log("EndpointUnBinded in beforeDestroy");
+      }
+    }
+
+    if (this.historyModel != null) {
+      this.historyModel.unbind(this.historyBind);
+      console.log("endpointHistoryUnbinded");
     }
   }
 };

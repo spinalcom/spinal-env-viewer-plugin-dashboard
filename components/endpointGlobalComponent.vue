@@ -121,10 +121,7 @@ export default {
         var type = el.constructor.name;
 
         if (type == "SpinalDevice") {
-          console.log("it is a device");
           //Si spinalDevice
-
-          console.log("current_endpoint", current_endpoint);
 
           _self.endpoints = _self.endpoints.concat(
             current_endpoint.getChildrenByAppByRelation(
@@ -141,11 +138,9 @@ export default {
           );
         } else if (type == "SpinalEndpoint") {
           //si endpoint
-          console.log("it is an endpoint", current_endpoint);
 
           _self.endpoints.push(current_endpoint);
         } else if (type == "SpinalEndpointGroup") {
-          console.log("it is an endpointGroup");
           //si endpointGroup
           _self.endPointsGroupNodes.concat([current_endpoint]);
         }
@@ -183,9 +178,6 @@ export default {
     },
     severalEndpoints: function(newSeveralEndpoints) {
       var _self = this;
-
-      console.log("severalEndpoints", this.severalEndpoints);
-      console.log("newSeveralEndpoints", newSeveralEndpoints);
 
       if (
         typeof newSeveralEndpoints != "undefined" &&

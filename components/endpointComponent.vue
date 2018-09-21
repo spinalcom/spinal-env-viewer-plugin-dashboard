@@ -4,6 +4,11 @@
               :class="{selected: isEndpointSelected()}"
               :style="divStyle"
               @click="selectEndpoint">
+
+    <seuil-component :showDialog="displaySeuil"
+                     :endpointSelected="seuilEndPoint"
+                     @hideDialog="configureSeuil"></seuil-component>
+
     <!-- one_item : itemCount == 1,two_item : itemCount == 2,three_item : itemCount == 3, four_item : itemCount == 4 , five_item : itemCount == 5, six_item :itemCount == 6 -->
     <div v-if="endpoint"
          :class="{endpoint_boolean : isBoolean(), endpoint_string : !isBoolean()}">
@@ -18,10 +23,14 @@
         <div class="currentUnit">{{endpoint.unit}}</div>
       </div>
       <div class="btnGroup">
-        <md-button class="md-icon-button md-dense"
-                   title="open Graph Panel"
-                   @click="openGraphPanel">
-          <md-icon>pie_chart</md-icon>
+        <md-button v-for="icon in iconsItems"
+                   :key="icon.iconName"
+                   class="md-icon-button md-dense"
+                   :title="icon.title"
+                   @click="icon.clickMethod">
+          <md-icon>
+            {{icon.iconName}}
+          </md-icon>
         </md-button>
 
         <md-button v-if="displayAlarmIcon()"
@@ -43,14 +52,30 @@
 <script>
 const globalType = typeof window === "undefined" ? global : window;
 import chartComponent from "./chartComponent.vue";
+import seuilComponent from "./configureSeuilDialog.vue";
+
 var getInfo = require("../classes/getInfo.js");
 var getInfoInstance = new getInfo.GetInformation();
 var viewer;
+
 export default {
   name: "endpointComponent",
-  components: { chartComponent },
+  components: { chartComponent, seuilComponent },
   props: ["endpointNode", "endpointSelected"],
   data() {
+    this.iconsItems = [
+      {
+        title: "open Graph Panel",
+        clickMethod: this.openGraphPanel,
+        iconName: "pie_chart"
+      },
+      {
+        title: "Configure Seuil",
+        clickMethod: this.configureSeuil,
+        iconName: "trending_down"
+      }
+    ];
+
     return {
       endpoint: null,
       chartData: null,
@@ -60,7 +85,9 @@ export default {
       alarmMode: false,
       delay: 500,
       clicks: 0,
-      timer: null
+      timer: null,
+      displaySeuil: false,
+      seuilEndPoint: null
     };
   },
   computed: {
@@ -86,7 +113,6 @@ export default {
       return res;
     },
     selectEndpoint: function() {
-      console.log("this.endpointNode", this.endpointNode);
       this.$emit("selectEndpoint", this.endpointNode);
     },
     editEndpoint: function() {},
@@ -95,6 +121,7 @@ export default {
 
       this.endpointNode.getElement().then(el => {
         el.bind(() => {
+          _self.seuilEndPoint = el;
           _self.endpoint = getInfoInstance.getDeviceDetail(el);
 
           _self.chartData = {
@@ -213,7 +240,6 @@ export default {
       );
 
       for (var i = 0; i < relations.length; i++) {
-        console.log(i);
         allBimOjects = allBimOjects.concat(
           this.getDbids(relations[i].nodeList1[0], "linker")
         );
@@ -258,7 +284,16 @@ export default {
         });
         this.clicks = 0;
       }
+    },
+    configureSeuil: function() {
+      this.displaySeuil = !this.displaySeuil;
     }
+    // saveSeuil: function(save) {
+    //   this.displaySeuil = !this.displaySeuil;
+    //   if (save) {
+    //     console.log("save");
+    //   }
+    // }
   },
   mounted() {
     var _self = this;

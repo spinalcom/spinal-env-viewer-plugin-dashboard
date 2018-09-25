@@ -45,7 +45,7 @@ export default {
 
     this.chartData = [
       {
-        type: "lines+markers",
+        mode: "lines",
         y: [],
         x: [],
         marker: {
@@ -53,7 +53,16 @@ export default {
           line: {
             width: 2
           }
-        }
+        },
+        connectgaps: true,
+        transforms: [
+          {
+            type: "filter",
+            target: "y",
+            operation: "!=",
+            value: NaN
+          }
+        ]
       }
     ];
 

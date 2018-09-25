@@ -5,8 +5,8 @@
     <md-list class="endpoint_sidebar">
       <md-list-item>
         <div class="md-list-item-text"
-             title="NUMBER OF ITEMS TO DISPLAY PER LINE">
-          NUMBER OF ITEMS TO DISPLAY PER LINE
+             title="NUMBER OF COLUMNS">
+          NUMBER OF COLUMNS
         </div>
 
         <md-button class="md-icon-button md-dense"

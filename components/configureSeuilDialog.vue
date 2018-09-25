@@ -12,7 +12,8 @@
           <md-subheader>Seuil Min</md-subheader>
 
           <md-list-item>
-            <md-checkbox v-model="seuilMin.active">Active</md-checkbox>
+            <md-checkbox class="md-primary"
+                         v-model="seuilMin.active">Active</md-checkbox>
           </md-list-item>
 
           <md-field md-inline
@@ -29,7 +30,8 @@
           <md-subheader>Seuil Max</md-subheader>
 
           <md-list-item>
-            <md-checkbox v-model="seuilMax.active">Active</md-checkbox>
+            <md-checkbox class="md-primary"
+                         v-model="seuilMax.active">Active</md-checkbox>
           </md-list-item>
 
           <md-field md-inline

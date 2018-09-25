@@ -17,7 +17,7 @@ const globalType = typeof window === "undefined" ? global : window;
 var appName = "smartConnector";
 export default {
   name: "plotlyComponent",
-  props: ["graph_data", "graphXData"],
+  // props: ["graph_data", "graphXData"],
   data() {
     this.layout = {
       margin: {
@@ -41,14 +41,13 @@ export default {
         showgrid: false,
         showline: true
       }
-      shapes: []
     };
 
     this.chartData = [
       {
-        type: "scatter",
-        y: this.graph_data ? this.graph_data : [],
-        x: this.graphXData ? this.graphXData : [],
+        type: "lines+markers",
+        y: [],
+        x: [],
         marker: {
           color: "#356BAB",
           line: {
@@ -70,17 +69,15 @@ export default {
     this.historyModel = null;
 
     return {
+      graph_data: [],
+      graphXData: [],
       endpointSelected: null
     };
   },
   mounted() {
+    console.log("plotlyComponent mounted");
     this.getEvents();
     this._graph_ = this.createGraph();
-
-    Plotly.plot(this._graph_.gd, this.chartData, this.layout, {
-      modeBarButtonsToRemove: ["sendDataToCloud"],
-      displaylogo: false
-    });
 
     setInterval(() => {
       this.resize(this._graph_.gd, this._graph_.gd3);
@@ -126,51 +123,19 @@ export default {
         // this.name = el.name.get();
 
         el.getElement().then(endpoint => {
-          console.log("endpointModel", endpoint);
-          if (this.endPointModel != endpoint) {
-            if (this.endPointModel != null) {
-              this.endPointModel.unbind(this.endpointBind);
-              console.log("EndpointUnBinded");
-            }
+          // if (this.endPointModel != endpoint) {
+          //   if (this.endPointModel != null) {
+          //     this.endPointModel.unbind(this.endpointBind);
+          //   }
 
-            this.endPointModel = endpoint;
+          this.endPointModel = endpoint;
 
-            this.endpointBind = endpoint.bind(() => {
-              console.log("enPointBindCalled");
-              this.layout.shapes = [];
-
-              if (endpoint.seuilMin.active) {
-                this.layout.shapes.push({
-                  type: "line",
-                  y0: endpoint.seuilMin.value.get(),
-                  y1: endpoint.seuilMin.value.get(),
-                  x0: 0,
-                  x1: 4,
-                  line: {
-                    color: "red",
-                    width: 2.5
-                  }
-                });
-              }
-
-              if (endpoint.seuilMax.active) {
-                this.layout.shapes.push({
-                  type: "line",
-                  y0: endpoint.seuilMax.value.get(),
-                  y1: endpoint.seuilMax.value.get(),
-                  x0: 0,
-                  x1: 4,
-                  line: {
-                    color: "red",
-                    width: 2.5
-                  }
-                });
-              }
-
-              // this.seuilMin = endpoint.seuilMin.get();
-              // this.seuilMax = endpoint.seuilMax.get();
-            });
-          }
+          // this.endpointBind = endpoint.bind(() => {
+          //   this.defineSeuil(endpoint);
+          //   // this.seuilMin = endpoint.seuilMin.get();
+          //   // this.seuilMax = endpoint.seuilMax.get();
+          // });
+          // }
         });
 
         var historyValue = el.getRelationsByAppNameByType(
@@ -183,17 +148,62 @@ export default {
             .getNodeList2()[0]
             .getElement()
             .then(el2 => {
-              console.log("history", el2.history);
               this.historyModel = el2.history;
               this.historyBind = el2.history.bind(() => {
-                console.log("enPointHistoryBindCalled");
+                // this.graph_data = el2.history.get();
+                // this.graphXData = el2.historyDate.get();
 
-                this.graph_data = el2.history.get();
-                this.graphXData = el2.historyDate.get();
+                this.defineSeuil(
+                  this.endPointModel,
+                  el2.historyDate.get(),
+                  () => {
+                    this.updateGraph(el2.historyDate.get(), el2.history.get());
+                  }
+                );
               });
             });
         }
         this.openGraphPanel();
+      });
+    },
+    defineSeuil: function(argEndpoint, argHistory, callback) {
+      this.layout["shapes"] = [];
+
+      if (argEndpoint.seuilMin.active.get()) {
+        this.layout.shapes.push({
+          type: "line",
+          y0: argEndpoint.seuilMin.value.get(),
+          y1: argEndpoint.seuilMin.value.get(),
+          x0: new Date(argHistory[0]).getTime(),
+          x1: new Date(argHistory[argHistory.length - 1]).getTime(),
+          line: {
+            color: "red",
+            width: 2.5
+          }
+        });
+      }
+
+      if (argEndpoint.seuilMax.active.get()) {
+        this.layout.shapes.push({
+          type: "line",
+          y0: argEndpoint.seuilMax.value.get(),
+          y1: argEndpoint.seuilMax.value.get(),
+          x0: new Date(argHistory[0]).getTime(),
+          x1: new Date(argHistory[argHistory.length - 1]).getTime(),
+          line: {
+            color: "red",
+            width: 2.5
+          }
+        });
+      }
+      callback();
+    },
+    updateGraph: function(xData, yData) {
+      this.chartData[0].x = xData;
+      this.chartData[0].y = yData;
+      Plotly.react(this._graph_.gd, this.chartData, this.layout, {
+        modeBarButtonsToRemove: ["sendDataToCloud"],
+        displaylogo: false
       });
     }
     // getMaxData: function() {
@@ -261,21 +271,28 @@ export default {
     // }
   },
   watch: {
-    graph_data: function() {
+    graph_data: function(newValue, oldValue) {
       // this.chartData[0].y = this.graph_data;
       // this.chartData[0].x = this.graphXData;
       // this.chartData = [];
-
       // this.getGraphData(() => {
       //   Plotly.react(this._graph_.gd, this.chartData, this.layout);
       // });
-
-      console.log("graphData change");
-
-      this.chartData[0].y = this.graph_data;
-      this.chartData[0].x = this.graphXData;
-      Plotly.react(this._graph_.gd, this.chartData, this.layout);
+      // console.log("graph_Data change");
+      // this.chartData[0].y = this.graph_data;
+      // this.chartData[0].x = this.graphXData;
+      // if (oldValue.length == 0) {
+      //   console.log("chartData", this.chartData.x);
+      //   Plotly.plot(this._graph_.gd, this.chartData, this.layout, {
+      //     modeBarButtonsToRemove: ["sendDataToCloud"],
+      //     displaylogo: false
+      //   });
+      // } else {
+      //   console.log("oldValue.length", oldValue.length);
+      //   Plotly.react(this._graph_.gd, this.chartData, this.layout);
+      // }
     },
+    graphXData: function() {},
     endpointSelected: function(newEndpoint, oldEndpoint) {
       if (oldEndpoint) {
         if (this.historyModel != null)
@@ -284,12 +301,12 @@ export default {
     }
   },
   beforeDestroy() {
-    if (this.endPointModel != endpoint) {
-      if (this.endPointModel != null) {
-        his.endPointModel.unbind(this.endpointBind);
-        console.log("EndpointUnBinded in beforeDestroy");
-      }
-    }
+    // if (this.endPointModel != endpoint) {
+    //   if (this.endPointModel != null) {
+    //     this.endPointModel.unbind(this.endpointBind);
+    //     console.log("EndpointUnBinded in beforeDestroy");
+    //   }
+    // }
 
     if (this.historyModel != null) {
       this.historyModel.unbind(this.historyBind);

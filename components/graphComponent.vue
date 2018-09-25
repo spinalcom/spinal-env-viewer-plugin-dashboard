@@ -17,7 +17,7 @@
                             :data="chartData"
                             :options="chartOptions"></line-chart-component> -->
 
-      <plotly-component :graph_data="chartData"></plotly-component>
+      <plotly-component></plotly-component>
 
     </div>
 

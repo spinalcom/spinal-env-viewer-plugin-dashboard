@@ -148,6 +148,7 @@ export default {
             .getNodeList2()[0]
             .getElement()
             .then(el2 => {
+              if (this.historyModel) this.historyModel.unbind(this.historyBind);
               this.historyModel = el2.history;
               this.historyBind = el2.history.bind(() => {
                 // this.graph_data = el2.history.get();
@@ -294,10 +295,12 @@ export default {
     },
     graphXData: function() {},
     endpointSelected: function(newEndpoint, oldEndpoint) {
-      if (oldEndpoint) {
-        if (this.historyModel != null)
-          this.historyModel.unbind(this.historyBind);
-      }
+      // if (oldEndpoint) {
+      //   if (this.historyModel != null) {
+      //     this.historyModel.unbind(this.historyBind);
+      //     console.log("history.unbind");
+      //   }
+      // }
     }
   },
   beforeDestroy() {

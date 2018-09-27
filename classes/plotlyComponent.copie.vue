@@ -17,9 +17,12 @@ const globalType = typeof window === "undefined" ? global : window;
 var appName = "smartConnector";
 export default {
   name: "plotlyComponent",
+  // props: ["graph_data", "graphXData"],
   data() {
     this.layout = {
       margin: {
+        // l: 50,
+        // r: 20,
         b: 90,
         t: 8,
         pad: 4
@@ -32,8 +35,7 @@ export default {
       plot_bgcolor: "rgba(0,0,0,0)",
       xaxis: {
         showgrid: false,
-        showline: true,
-        tickformat: "%d/%m/%Y %H:%M"
+        showline: true
       },
       yaxis: {
         showgrid: false,
@@ -43,7 +45,7 @@ export default {
 
     this.chartData = [
       {
-        mode: "lines+markers",
+        mode: "lines",
         y: [],
         x: [],
         marker: {
@@ -66,11 +68,8 @@ export default {
 
     this._graph_ = null;
 
-    this.seuilMinBind = null;
-    this.seuilMaxBind = null;
-
-    this.seuilMinModel = null;
-    this.seuilMaxModel = null;
+    this.seuilMin = null;
+    this.seuilMax = null;
 
     this.endpointBind = null;
     this.endPointModel = null;
@@ -85,6 +84,7 @@ export default {
     };
   },
   mounted() {
+    console.log("plotlyComponent mounted");
     this.getEvents();
     this._graph_ = this.createGraph();
 
@@ -94,6 +94,8 @@ export default {
   },
   methods: {
     createGraph: function() {
+      // var copieLayout = JSON.parse(JSON.stringify(this.layout));
+
       var d3 = Plotly.d3;
       var graphWidth = 100,
         graphHeight = 100;
@@ -158,22 +160,8 @@ export default {
               if (this.historyModel) this.historyModel.unbind(this.historyBind);
               this.historyModel = el2.history;
               this.historyBind = el2.history.bind(() => {
-                this.defineSeuil(
-                  this.endPointModel,
-                  el2.historyDate.get(),
-                  () => {
-                    this.updateGraph(el2.historyDate.get(), el2.history.get());
-                  }
-                );
-              });
-
-              /**** Bind et unbind seuiMin */
-              if (this.seuilMinModel) {
-                this.seuilMinModel.unbind(this.seuilMinBind);
-              }
-
-              this.seuilMinBind = this.endPointModel.seuilMin.bind(() => {
-                this.seuilMinModel = this.endPointModel.seuilMin;
+                // this.graph_data = el2.history.get();
+                // this.graphXData = el2.historyDate.get();
 
                 this.defineSeuil(
                   this.endPointModel,
@@ -183,26 +171,6 @@ export default {
                   }
                 );
               });
-              /**** Fin Bind et unbind seuiMin */
-
-              /**** Bind et unbind seuiMax */
-              if (this.seuilMaxModel) {
-                this.seuilMaxModel.unbind(this.seuilMaxBind);
-              }
-
-              this.seuilMaxBind = this.endPointModel.seuilMax.bind(() => {
-                this.seuilMaxModel = this.endPointModel.seuilMax;
-
-                this.defineSeuil(
-                  this.endPointModel,
-                  el2.historyDate.get(),
-                  () => {
-                    this.updateGraph(el2.historyDate.get(), el2.history.get());
-                  }
-                );
-              });
-
-              /**** Fin Bind et unbind seuiMax */
             });
         }
         this.openGraphPanel();
@@ -210,8 +178,6 @@ export default {
     },
     defineSeuil: function(argEndpoint, argHistory, callback) {
       this.layout["shapes"] = [];
-
-      // console.log("argHistory", argHistory);
 
       if (argEndpoint.seuilMin.active.get()) {
         this.layout.shapes.push({
@@ -250,8 +216,102 @@ export default {
         displaylogo: false
       });
     }
+    // getMaxData: function() {
+    //   var x = [];
+    //   if (this.graphXData) {
+    //     for (var i = 0; i < this.graphXData.length; i++) {
+    //       x.push(this.seuilMax.value);
+    //     }
+    //   }
+    //   return x;
+    // },
+    // getMinData: function() {
+    //   var x = [];
+    //   if (this.graphXData) {
+    //     for (var i = 0; i < this.graphXData.length; i++) {
+    //       x.push(this.seuilMin.value);
+    //     }
+    //   }
+    //   return x;
+    // }
+    // getGraphData(callback) {
+    //   this.chartData.push({
+    //     type: "scatter",
+    //     y: this.graph_data ? this.graph_data : [],
+    //     x: this.graphXData ? this.graphXData : [],
+    //     marker: {
+    //       color: "#356BAB",
+    //       line: {
+    //         width: 5
+    //       }
+    //     },
+    //     name: "value line"
+    //   });
+
+    //   if (this.seuilMin.active) {
+    //     this.chartData.push({
+    //       type: "scatter",
+    //       y: this.getMinData(),
+    //       x: this.graphXData ? this.graphXData : [],
+    //       marker: {
+    //         color: "#FF4D3F",
+    //         line: {
+    //           width: 5
+    //         }
+    //       },
+    //       name: "minimum threshold"
+    //     });
+    //   }
+
+    //   if (this.seuilMax.active) {
+    //     this.chartData.push({
+    //       type: "scatter",
+    //       y: this.getMaxData(),
+    //       x: this.graphXData ? this.graphXData : [],
+    //       marker: {
+    //         color: "#FF4D3F",
+    //         line: {
+    //           width: 5
+    //         }
+    //       },
+    //       name: "maximum threshold"
+    //     });
+    //   }
+    //   callback();
+    // }
   },
-  watch: {},
+  watch: {
+    graph_data: function(newValue, oldValue) {
+      // this.chartData[0].y = this.graph_data;
+      // this.chartData[0].x = this.graphXData;
+      // this.chartData = [];
+      // this.getGraphData(() => {
+      //   Plotly.react(this._graph_.gd, this.chartData, this.layout);
+      // });
+      // console.log("graph_Data change");
+      // this.chartData[0].y = this.graph_data;
+      // this.chartData[0].x = this.graphXData;
+      // if (oldValue.length == 0) {
+      //   console.log("chartData", this.chartData.x);
+      //   Plotly.plot(this._graph_.gd, this.chartData, this.layout, {
+      //     modeBarButtonsToRemove: ["sendDataToCloud"],
+      //     displaylogo: false
+      //   });
+      // } else {
+      //   console.log("oldValue.length", oldValue.length);
+      //   Plotly.react(this._graph_.gd, this.chartData, this.layout);
+      // }
+    },
+    graphXData: function() {},
+    endpointSelected: function(newEndpoint, oldEndpoint) {
+      // if (oldEndpoint) {
+      //   if (this.historyModel != null) {
+      //     this.historyModel.unbind(this.historyBind);
+      //     console.log("history.unbind");
+      //   }
+      // }
+    }
+  },
   beforeDestroy() {
     // if (this.endPointModel != endpoint) {
     //   if (this.endPointModel != null) {

@@ -20,7 +20,7 @@ var spinalSystem;
 var viewer;
 var EventBus;
 var graph;
-// var appName = "smartConnector3";
+var jeSuisAppNameJeSuisAModifier = "MyNetwork4";
 
 import endpointGlobalComponent from "./components/endpointGlobalComponent.vue";
 import graphComponent from "./components/graphComponent.vue";
@@ -129,7 +129,7 @@ export default {
           if (node.length > 1) {
             _self.deviceNodes = null;
             _self.severalEndpoints = [];
-            _self.appName = "smartConnector";
+            _self.appName = jeSuisAppNameJeSuisAModifier;
 
             for (var i = 0; i < node.length; i++) {
               var x = node[i];
@@ -142,7 +142,7 @@ export default {
                 ele.constructor.name === "SpinalEndpoint" ||
                 ele.constructor.name === "SpinalDevice"
               ) {
-                _self.appName = "smartConnector";
+                _self.appName = jeSuisAppNameJeSuisAModifier;
                 _self.deviceNodes = t;
                 _self.severalEndpoints = null;
               }

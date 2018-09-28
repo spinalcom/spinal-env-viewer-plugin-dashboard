@@ -14,7 +14,7 @@
 <script>
 // require("../classes/plotly.min.js");
 const globalType = typeof window === "undefined" ? global : window;
-var appName = "smartConnector";
+var appName = "MyNetwork4";
 export default {
   name: "plotlyComponent",
   data() {

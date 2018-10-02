@@ -141,9 +141,9 @@ export default {
 
           if (node.length > 1) {
             _self.deviceNodes = null;
-            _self.logNodes = null;
+            // _self.logNodes = null;
 
-            _self._self.severalEndpoints = [];
+            _self.severalEndpoints = [];
             _self.appName = _self.apppName; //jeSuisAppNameJeSuisAModifier;
 
             for (var i = 0; i < node.length; i++) {
@@ -160,7 +160,7 @@ export default {
                 _self.appName = _self.apppName; //jeSuisAppNameJeSuisAModifier;
                 _self.deviceNodes = t;
                 _self.severalEndpoints = null;
-                _self.logNodes = null;
+                // _self.logNodes = null;
               }
             });
           }

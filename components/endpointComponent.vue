@@ -34,9 +34,8 @@
         </md-button>
 
         <md-button v-if="displayAlarmIcon()"
-                   :class="{alarmMode : alarmMode}"
                    @click="activeAlarmMode"
-                   class="md-icon-button md-dense"
+                   class="alarmMode md-icon-button md-dense"
                    title="Alarm">
           <md-icon>error_outline</md-icon>
         </md-button>
@@ -218,12 +217,21 @@ export default {
       globalType.spinal.eventBus.$emit("seeGraphPanel", this.endpointNode);
     },
     displayAlarmIcon: function() {
-      var relations = this.endpointNode.getRelationsByAppNameByType(
-        "linker",
-        "link"
-      );
+      // var relations = this.endpointNode.getRelationsByAppNameByType(
+      //   "linker",
+      //   "link"
+      // );
+      // if (relations.length > 0) {
+      //   return true;
+      // }
+      // return false;
 
-      if (relations.length > 0) {
+      if (
+        (this.endpoint.max.active &&
+          this.endpoint.currentValue >= this.endpoint.max.value) ||
+        (this.endpoint.min.active &&
+          this.endpoint.currentValue <= this.endpoint.min.value)
+      ) {
         return true;
       }
       return false;

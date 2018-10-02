@@ -79,9 +79,10 @@ export default {
             _self.deviceNodes = el.node;
           }
         } else {
-          _self.deviceNodes = null;
-          _self.severalEndpoints = null;
-          _self.logNodes = el.node;
+          // _self.deviceNodes = null;
+          // _self.severalEndpoints = null;
+          // _self.logNodes = el.node;
+          console.log("logger");
         }
         // _self.openClosePanel();
       });
@@ -94,9 +95,10 @@ export default {
             "Dashboard : " + el.node.name.get()
           );
         } else {
-          _self.deviceNodes = null;
-          _self.severalEndpoints = null;
-          _self.logNodes = el.node;
+          // _self.deviceNodes = null;
+          // _self.severalEndpoints = null;
+          // _self.logNodes = el.node;
+          console.log("logger");
         }
         _self.openClosePanel();
       });

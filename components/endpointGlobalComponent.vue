@@ -51,24 +51,31 @@
         </md-toolbar>
 
         <div class="_endpoint_div_content">
-          <endpoint-component v-if="showEndpoint"
+          <endpoint-component v-if="showEndpoint && displayEndpoint"
                               @selectEndpoint="selectEndpoint"
                               v-for="endpoint in endpoints"
                               :key="endpoint._server_id"
                               :endpointNode="endpoint"
                               :endpointSelected="endpointSelected"></endpoint-component>
+
         </div>
 
       </div>
 
+      <div v-if="displayLog">
+        <h3>vous avez selectionné une alerte (template encours de developpement)</h3>
+      </div>
+
       <!--*********************************************************** Fin Others *****************************************************************************-->
 
-      <endpoint-group v-for="endpoint_group in endPointsGroupNodes"
+      <endpoint-group v-if="displayEndpoint"
+                      v-for="endpoint_group in endPointsGroupNodes"
                       :key="endpoint_group._server_id"
                       :endpointGroupNode="endpoint_group"
                       @selectEndpoint="selectEndpoint"
                       :appName="appName"
                       :endpointSelected="endpointSelected"></endpoint-group>
+
     </md-content>
   </md-content>
 </template>
@@ -85,13 +92,21 @@ var getInfoInstance = new getInfo.GetInformation();
 export default {
   name: "endpointGlobalComponent",
   components: { endpointComponent, endpointGroup },
-  props: ["deviceNode", "appName", "endpointSelected", "severalEndpoints"],
+  props: [
+    "deviceNode",
+    "appName",
+    "endpointSelected",
+    "severalEndpoints",
+    "logNodes"
+  ],
   data() {
     return {
       endpoints: [],
       endPointsGroupNodes: [],
       showEndpoint: true,
-      itemCountPerLine: 3
+      itemCountPerLine: 3,
+      displayEndpoint: false,
+      displayLog: false
     };
   },
   methods: {
@@ -150,6 +165,8 @@ export default {
   watch: {
     deviceNode: function(newDeviceNode) {
       var _self = this;
+      this.displayEndpoint = true;
+      this.displayLog = false;
 
       if (typeof newDeviceNode != "undefined" && newDeviceNode != null) {
         this.deviceNode.getElement().then(m => {
@@ -178,6 +195,8 @@ export default {
     },
     severalEndpoints: function(newSeveralEndpoints) {
       var _self = this;
+      this.displayEndpoint = true;
+      this.displayLog = false;
 
       if (
         typeof newSeveralEndpoints != "undefined" &&
@@ -193,6 +212,24 @@ export default {
             this.getEndpointsNode(current_endpoint);
           }
         }
+      }
+    },
+    logNodes: function(newLogNodes) {
+      var _self = this;
+      this.displayEndpoint = false;
+      this.displayLog = true;
+
+      if (typeof newLogNodes != "undefined" && newLogNodes != null) {
+        this.logNodes.getElement().then(log => {
+          var type = log.constructor.name;
+          _self.endPointsGroupNodes = [];
+
+          if (type == "SpinalEndpoint") {
+            _self.endpoints = []; //getRelationByHasLog
+          } else if (type == "SpinalLog") {
+            _self.endpoints = [];
+          }
+        });
       }
     }
   }

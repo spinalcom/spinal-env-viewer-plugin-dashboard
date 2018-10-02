@@ -6,7 +6,8 @@
                                :deviceNode="deviceNodes"
                                :severalEndpoints="severalEndpoints"
                                :appName="appName"
-                               :endpointSelected="endpointSelected"></endpoint-global-component>
+                               :endpointSelected="endpointSelected"
+                               :logNodes="logNodes"></endpoint-global-component>
 
     <!-- <graph-component :endpointSelected="endpointSelected"
                      :appName="appName"></graph-component> -->
@@ -34,14 +35,14 @@ export default {
       appName: null,
       endpointSelected: null,
       bimObjectSelected: null,
-      severalEndpoints: null
+      severalEndpoints: null,
+      logNodes: null
     };
   },
   components: { endpointGlobalComponent, graphComponent },
   methods: {
     getNodeItem: function(nodeI) {
       nodeI.getElement().then(el => {
-        console.log("constructor", el.constructor.name);
         if (
           el.constructor.name === "SpinalEndpoint" ||
           el.constructor.name === "SpinalDevice"
@@ -67,30 +68,40 @@ export default {
       var _self = this;
 
       EventBus.$on("nodeContext", el => {
-        if (
-          globalType.spinal.panelManager.panelsGroup.dashboard[0].isVisible()
-        ) {
-          globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
-            "Dashboard : " + el.node.name.get()
-          );
-          _self.appName = el.context.name.get();
-          _self.deviceNodes = el.node;
+        if (el.context.name != "logger") {
+          if (
+            globalType.spinal.panelManager.panelsGroup.dashboard[0].isVisible()
+          ) {
+            globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
+              "Dashboard : " + el.node.name.get()
+            );
+            _self.apppName = el.context.name.get();
+            _self.deviceNodes = el.node;
+          }
+        } else {
+          _self.deviceNodes = null;
+          _self.severalEndpoints = null;
+          _self.logNodes = el.node;
         }
-
         // _self.openClosePanel();
       });
 
       EventBus.$on("openDashboard", el => {
         _self.appName = el.context.name.get();
-        _self.deviceNodes = el.node;
-        globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
-          "Dashboard : " + el.node.name.get()
-        );
+        if (_self.appName != "logger") {
+          _self.deviceNodes = el.node;
+          globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
+            "Dashboard : " + el.node.name.get()
+          );
+        } else {
+          _self.deviceNodes = null;
+          _self.severalEndpoints = null;
+          _self.logNodes = el.node;
+        }
         _self.openClosePanel();
       });
 
       EventBus.$on("getNodeClick", el => {
-        console.log(el);
         _self.bimObjectSelected = el;
       });
 
@@ -128,8 +139,10 @@ export default {
 
           if (node.length > 1) {
             _self.deviceNodes = null;
-            _self.severalEndpoints = [];
-            _self.appName = jeSuisAppNameJeSuisAModifier;
+            _self.logNodes = null;
+
+            _self._self.severalEndpoints = [];
+            _self.appName = _self.apppName; //jeSuisAppNameJeSuisAModifier;
 
             for (var i = 0; i < node.length; i++) {
               var x = node[i];
@@ -142,9 +155,10 @@ export default {
                 ele.constructor.name === "SpinalEndpoint" ||
                 ele.constructor.name === "SpinalDevice"
               ) {
-                _self.appName = jeSuisAppNameJeSuisAModifier;
+                _self.appName = _self.apppName; //jeSuisAppNameJeSuisAModifier;
                 _self.deviceNodes = t;
                 _self.severalEndpoints = null;
+                _self.logNodes = null;
               }
             });
           }

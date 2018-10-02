@@ -129,6 +129,8 @@ export default {
         this.endpointSelected = el;
         // this.name = el.name.get();
 
+        console.log("el", el);
+
         el.getElement().then(endpoint => {
           // if (this.endPointModel != endpoint) {
           //   if (this.endPointModel != null) {

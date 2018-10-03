@@ -68,7 +68,7 @@ export default {
       var _self = this;
 
       EventBus.$on("nodeContext", el => {
-        if (el.context.name != "logger") {
+        if (el.context.name.get() != "logger") {
           if (
             globalType.spinal.panelManager.panelsGroup.dashboard[0].isVisible()
           ) {
@@ -144,7 +144,7 @@ export default {
             // _self.logNodes = null;
 
             _self.severalEndpoints = [];
-            _self.appName = _self.apppName; //jeSuisAppNameJeSuisAModifier;
+            _self.appName = jeSuisAppNameJeSuisAModifier; //_self.apppName;
 
             for (var i = 0; i < node.length; i++) {
               var x = node[i];
@@ -157,7 +157,7 @@ export default {
                 ele.constructor.name === "SpinalEndpoint" ||
                 ele.constructor.name === "SpinalDevice"
               ) {
-                _self.appName = _self.apppName; //jeSuisAppNameJeSuisAModifier;
+                _self.appName = jeSuisAppNameJeSuisAModifier; //_self.apppName
                 _self.deviceNodes = t;
                 _self.severalEndpoints = null;
                 // _self.logNodes = null;

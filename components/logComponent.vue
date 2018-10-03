@@ -6,19 +6,39 @@
               @click="selectEndpoint">
 
     <!-- one_item : itemCount == 1,two_item : itemCount == 2,three_item : itemCount == 3, four_item : itemCount == 4 , five_item : itemCount == 5, six_item :itemCount == 6 -->
-    <!-- <div v-if="endpoint"
-         :class="{endpoint_boolean : isBoolean(), endpoint_string : !isBoolean()}">
+    <div v-if="endpoint"
+         class="logClass">
       <div class="name"
            :title="endpoint.name">
         {{endpoint.name}}
       </div>
-      <div class="value"
-           :title="endpoint.currentValue"
-           :class="{falseValue : !booleanTrueOrFalse() && isBoolean()  , trueValue : booleanTrueOrFalse() && isBoolean()}">
-        <div class="currentValue">{{formatCurrentValue(endpoint.currentValue) }}</div>
-        <div class="currentUnit">{{endpoint.unit}}</div>
+
+      <div class="message"
+           :title="endpoint.message">
+        {{ endpoint.message }}
       </div>
-      <div class="btnGroup">
+
+      <div class="date">
+        <div class="date_item">
+          <span title="maximum value"
+                class="title">Max Value :</span>
+          <span class="value"
+                :title="endpoint.value">{{endpoint.value}}</span>
+        </div>
+        <div class="date_item">
+          <span title="Begin"
+                class="title">Begin :</span>
+          <span class="value"
+                :title="formatDate(endpoint.end)">{{formatDate(endpoint.begin)}}</span>
+        </div>
+        <div class="date_item">
+          <span title="End"
+                class="title">End :</span>
+          <span class="value"
+                :title="formatDate(endpoint.end)">{{formatDate(endpoint.end)}}</span>
+        </div>
+      </div>
+      <!--   <div class="btnGroup">
         <md-button v-for="icon in iconsItems"
                    :key="icon.iconName"
                    class="md-icon-button md-dense"
@@ -36,8 +56,8 @@
           <md-icon>error_outline</md-icon>
         </md-button>
 
-      </div>
-    </div> -->
+      </div> -->
+    </div>
 
   </md-content>
 
@@ -55,26 +75,14 @@ var viewer;
 
 export default {
   name: "logComponent",
-  components: { chartComponent, seuilComponent },
-  props: ["endpointNode", "endpointSelected"],
+  components: { chartComponent },
+  props: ["endpointNode", "logNodes", "endpointSelected"],
   data() {
-    this.iconsItems = [
-      {
-        title: "open Graph Panel",
-        clickMethod: this.openGraphPanel,
-        iconName: "pie_chart"
-      },
-      {
-        title: "Configure Seuil",
-        clickMethod: this.configureSeuil,
-        iconName: "trending_down"
-      }
-    ];
-
     return {
+      endpoint: null,
       log: null,
       mouseOver: false,
-      itemCount: 3
+      itemCount: 2
     };
   },
   computed: {
@@ -85,75 +93,16 @@ export default {
     }
   },
   methods: {
-    getDbids: async function(node, app) {
-      let res = [];
-      let element = await node.getElement();
-      if (element.constructor.name === "BIMElement") {
-        res = res.concat(element.id.get());
-      } else if (node.hasChildren()) {
-        let childrenNodes = node.getChildrenByApp(app);
-        for (let index = 0; index < childrenNodes.length; index++) {
-          const childNode = childrenNodes[index];
-          res = res.concat(await this.getDbids(childNode, app));
-        }
-      }
-      return res;
-    },
     selectEndpoint: function() {
       this.$emit("selectEndpoint", this.endpointNode);
     },
-    getEndpoints: function() {
+    getLogElement: function() {
       var _self = this;
 
       this.endpointNode.getElement().then(el => {
         el.bind(() => {
-          _self.seuilEndPoint = el;
-          _self.endpoint = getInfoInstance.getDeviceDetail(el);
-
-          _self.chartData = {
-            datasets: [
-              {
-                /** Bind */
-                data: [
-                  parseInt(_self.endpoint.currentValue),
-                  _self.endpoint.max -
-                    _self.endpoint.min -
-                    _self.endpoint.currentValue
-                ],
-                backgroundColor: ["#356bab", "#58595b"],
-                hoverBackgroundColor: ["#356bab", "#58595b"]
-              }
-            ]
-          };
-
-          _self.chartOptions = {
-            elements: {
-              center: {
-                text: "90%",
-                color: "#FF6384",
-                fontStyle: "Arial",
-                sidePadding: 20
-              }
-            },
-            cutoutPercentage: 70,
-            rotation: 1 * Math.PI,
-            circumference: 1 * Math.PI,
-            title: {
-              display: true,
-              text: _self.endpoint.name.toUpperCase(),
-              fontSize: 12,
-              fontColor: "#FFFFFF",
-              padding: 0
-            },
-            tooltips: {
-              callbacks: {
-                label: (tooltipItem, data) => {
-                  return _self.endpoint.currentValue;
-                }
-              }
-            },
-            name: _self.endpoint.currentValue + _self.endpoint.unit
-          };
+          if (el.constructor.name == "SpinalLog")
+            _self.endpoint = getInfoInstance.getLogDetail(el);
         });
       });
     },
@@ -164,12 +113,28 @@ export default {
         }
       }
       return false;
+    },
+    formatDate: function(date) {
+      var t = new Date(date);
+      return (
+        t.getDate() +
+        "/" +
+        (t.getMonth() + 1) +
+        "/" +
+        t.getFullYear() +
+        " at " +
+        t.getHours() +
+        ":" +
+        t.getMinutes() +
+        ":" +
+        t.getSeconds()
+      );
     }
   },
   mounted() {
     var _self = this;
     if (this.endpointNode) {
-      this.getEndpoints();
+      this.getLogElement();
     }
 
     viewer = globalType.v;
@@ -180,7 +145,7 @@ export default {
   },
   watch: {
     endpointNode: function() {
-      this.getEndpoints();
+      this.getLogElement();
     }
   }
 };
@@ -189,7 +154,7 @@ export default {
 <style scoped>
 .md-content .logContent {
   /* width: 85px !important; */
-  height: 130px;
+  height: 230px;
   display: inline-block;
   justify-content: center;
   padding: 7px;
@@ -210,18 +175,16 @@ export default {
   background: #356bab;
 }
 
-.md-content .logContent .endpoint_name {
+/* .md-content .logContent .endpoint_name {
   width: 100%;
   height: 20%;
   text-align: center;
   padding-top: 5px;
   font-size: 1em;
   text-transform: capitalize;
-}
+} */
 
-.md-content .logContent .endpoint_doughnut,
-.md-content .logContent .endpoint_string,
-.md-content .logContent .endpoint_boolean {
+.md-content .logContent .logClass {
   width: 100%;
   height: 100%;
   display: block;
@@ -230,8 +193,7 @@ export default {
   overflow: hidden;
 }
 
-.md-content .logContent .endpoint_string .name,
-.md-content .logContent .endpoint_boolean .name {
+.md-content .logContent .logClass .name {
   width: 100%;
   height: 20%;
   text-align: center;
@@ -243,7 +205,7 @@ export default {
   overflow: hidden;
 }
 
-.md-content .logContent .endpoint_string .value {
+.md-content .logContent .logClass .message {
   width: 100%;
   height: 50%;
   min-height: 20px;
@@ -252,62 +214,35 @@ export default {
   padding-top: 8px;
   text-align: center;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-size: 13px;
 }
 
-.md-content .logContent .endpoint_boolean .value {
-  width: 100%;
-  height: 50%;
-  min-height: 20px;
-  color: #f68204;
-  align-items: center;
-  padding-top: 8px;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.md-content .logContent .endpoint_boolean .btnGroup,
-.md-content .logContent .endpoint_string .btnGroup {
+.md-content .logContent .logClass .date {
   width: 100%;
   height: 20%;
 }
 
-.md-content .logContent .endpoint_boolean .value .currentValue,
-.md-content .logContent .endpoint_boolean .value .currentUnit,
-.md-content .logContent .endpoint_string .value .currentValue,
-.md-content .logContent .endpoint_string .value .currentUnit {
+.md-content .logContent .logClass .date .date_item {
   width: 100%;
-  height: 50%;
-  white-space: nowrap;
+}
+
+.md-content .logContent .logClass .date .date_item span.title {
+  width: 50%;
+  float: left;
   text-overflow: ellipsis;
+  white-space: nowrap;
   overflow: hidden;
 }
 
-.md-content .logContent .endpoint_boolean .value .currentValue,
-.md-content .logContent .endpoint_string .value .currentValue {
-  font-size: 25px;
-  /* padding-top: inherit; */
-}
-
-.md-content .logContent .endpoint_boolean .value .currentUnit,
-.md-content .logContent .endpoint_string .value .currentUnit {
-  text-align: right;
-  font-size: 10px;
-}
-
-.md-content .logContent .trueValue {
-  color: black !important;
-  background: #31c64b;
-}
-
-.md-content .logContent .falseValue {
-  color: black !important;
-  background: #ff4d3f;
-}
-
-.alarmMode .md-icon {
-  color: #ff4d3f !important;
+.md-content .logContent .logClass .date .date_item span.value {
+  width: 50%;
+  float: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #f68204;
 }
 </style>

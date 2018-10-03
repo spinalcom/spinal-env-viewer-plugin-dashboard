@@ -121,52 +121,55 @@ export default {
       this.endpointNode.getElement().then(el => {
         el.bind(() => {
           _self.seuilEndPoint = el;
-          _self.endpoint = getInfoInstance.getDeviceDetail(el);
 
-          _self.chartData = {
-            datasets: [
-              {
-                /** Bind */
-                data: [
-                  parseInt(_self.endpoint.currentValue),
-                  _self.endpoint.max -
-                    _self.endpoint.min -
-                    _self.endpoint.currentValue
-                ],
-                backgroundColor: ["#356bab", "#58595b"],
-                hoverBackgroundColor: ["#356bab", "#58595b"]
-              }
-            ]
-          };
+          if (el.constructor.name == "SpinalEndpoint") {
+            _self.endpoint = getInfoInstance.getDeviceDetail(el);
 
-          _self.chartOptions = {
-            elements: {
-              center: {
-                text: "90%",
-                color: "#FF6384",
-                fontStyle: "Arial",
-                sidePadding: 20
-              }
-            },
-            cutoutPercentage: 70,
-            rotation: 1 * Math.PI,
-            circumference: 1 * Math.PI,
-            title: {
-              display: true,
-              text: _self.endpoint.name.toUpperCase(),
-              fontSize: 12,
-              fontColor: "#FFFFFF",
-              padding: 0
-            },
-            tooltips: {
-              callbacks: {
-                label: (tooltipItem, data) => {
-                  return _self.endpoint.currentValue;
+            _self.chartData = {
+              datasets: [
+                {
+                  /** Bind */
+                  data: [
+                    parseInt(_self.endpoint.currentValue),
+                    _self.endpoint.max -
+                      _self.endpoint.min -
+                      _self.endpoint.currentValue
+                  ],
+                  backgroundColor: ["#356bab", "#58595b"],
+                  hoverBackgroundColor: ["#356bab", "#58595b"]
                 }
-              }
-            },
-            name: _self.endpoint.currentValue + _self.endpoint.unit
-          };
+              ]
+            };
+
+            _self.chartOptions = {
+              elements: {
+                center: {
+                  text: "90%",
+                  color: "#FF6384",
+                  fontStyle: "Arial",
+                  sidePadding: 20
+                }
+              },
+              cutoutPercentage: 70,
+              rotation: 1 * Math.PI,
+              circumference: 1 * Math.PI,
+              title: {
+                display: true,
+                text: _self.endpoint.name.toUpperCase(),
+                fontSize: 12,
+                fontColor: "#FFFFFF",
+                padding: 0
+              },
+              tooltips: {
+                callbacks: {
+                  label: (tooltipItem, data) => {
+                    return _self.endpoint.currentValue;
+                  }
+                }
+              },
+              name: _self.endpoint.currentValue + _self.endpoint.unit
+            };
+          }
         });
       });
     },

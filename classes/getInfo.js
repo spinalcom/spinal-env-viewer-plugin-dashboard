@@ -5,10 +5,6 @@ var GetInformation = class GetInformation extends Model {
 
 
 
-  getAllEndPoint(deviceNode) {
-    deviceNode.get
-  }
-
 
   getDeviceDetail(device) {
     var deviceCopy = {};
@@ -45,6 +41,24 @@ var GetInformation = class GetInformation extends Model {
 
   }
 
+
+  getLogDetail(log) {
+
+    console.log("log", log);
+    var logCopy = {};
+
+    logCopy['id'] = log.id.get();
+    logCopy['name'] = log.name.get();
+    logCopy['type'] = log.type.get();
+    logCopy['begin'] = log.date_begin.get();
+    logCopy['end'] = log.date_end.get();
+    logCopy['user'] = log.user.get();
+    logCopy['message'] = log.message.get();
+    logCopy['value'] = log.value.get();
+
+    return logCopy;
+
+  }
 };
 
 module.exports.GetInformation = GetInformation;

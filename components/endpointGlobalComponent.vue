@@ -58,13 +58,19 @@
                               :endpointNode="endpoint"
                               :endpointSelected="endpointSelected"></endpoint-component>
 
+          <log-component v-if="displayLog"
+                         @selectEndpoint="selectEndpoint"
+                         v-for="log in endpoints"
+                         :key="log._server_id"
+                         :endpointNode="log"
+                         :endpointSelected="endpointSelected"></log-component>
         </div>
 
       </div>
 
-      <div v-if="displayLog">
+      <!-- <div v-if="displayLog">
         <h3>vous avez selectionné une alerte (template encours de developpement)</h3>
-      </div>
+      </div> -->
 
       <!--*********************************************************** Fin Others *****************************************************************************-->
 
@@ -85,13 +91,14 @@
 const globalType = typeof window === "undefined" ? global : window;
 var getInfo = require("../classes/getInfo.js");
 import endpointComponent from "./endpointComponent.vue";
+import logComponent from "./logComponent.vue";
 import endpointGroup from "./endpointGroupComponent.vue";
 
 var getInfoInstance = new getInfo.GetInformation();
 
 export default {
   name: "endpointGlobalComponent",
-  components: { endpointComponent, endpointGroup },
+  components: { endpointComponent, logComponent, endpointGroup },
   props: [
     "deviceNode",
     "appName",
@@ -104,7 +111,7 @@ export default {
       endpoints: [],
       endPointsGroupNodes: [],
       showEndpoint: true,
-      itemCountPerLine: 3,
+      itemCountPerLine: this.logNodes ? 2 : 3,
       displayEndpoint: false,
       displayLog: false
     };
@@ -165,10 +172,10 @@ export default {
   watch: {
     deviceNode: function(newDeviceNode) {
       var _self = this;
-      this.displayEndpoint = true;
-      this.displayLog = false;
 
       if (typeof newDeviceNode != "undefined" && newDeviceNode != null) {
+        this.displayEndpoint = true;
+        this.displayLog = false;
         this.deviceNode.getElement().then(m => {
           var type = m.constructor.name;
 
@@ -195,13 +202,13 @@ export default {
     },
     severalEndpoints: function(newSeveralEndpoints) {
       var _self = this;
-      this.displayEndpoint = true;
-      this.displayLog = false;
 
       if (
         typeof newSeveralEndpoints != "undefined" &&
         newSeveralEndpoints != null
       ) {
+        this.displayEndpoint = true;
+        this.displayLog = false;
         this.endpoints = [];
         this.endPointsGroupNodes = [];
 
@@ -216,18 +223,21 @@ export default {
     },
     logNodes: function(newLogNodes) {
       var _self = this;
-      this.displayEndpoint = false;
-      this.displayLog = true;
 
       if (typeof newLogNodes != "undefined" && newLogNodes != null) {
+        this.displayEndpoint = false;
+        this.displayLog = true;
         this.logNodes.getElement().then(log => {
           var type = log.constructor.name;
           _self.endPointsGroupNodes = [];
 
           if (type == "SpinalEndpoint") {
-            _self.endpoints = []; //getRelationByHasLog
+            _self.endpoints = _self.logNodes.getChildrenByAppByRelation(
+              _self.appName,
+              "hasLog"
+            );
           } else if (type == "SpinalLog") {
-            _self.endpoints = [];
+            _self.endpoints = [_self.logNodes];
           }
         });
       }

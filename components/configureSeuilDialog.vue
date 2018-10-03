@@ -1,6 +1,7 @@
 <template>
   <md-content class="globalDialog">
-    <md-dialog :md-active.sync="showDialog">
+    <md-dialog :md-active.sync="showDialog"
+               v-if="seuilMin && seuilMax">
       <md-dialog-title>Seuil Configuration :
         <span style="color: #356BAB"
               v-if="endpointSelected">{{endpointSelected.name.get()}}</span>
@@ -80,8 +81,10 @@ export default {
   },
   watch: {
     endpointSelected: function() {
-      this.seuilMin = this.endpointSelected.seuilMin.get();
-      this.seuilMax = this.endpointSelected.seuilMax.get();
+      if (this.endpointSelected.constructor.nale) {
+        this.seuilMin = this.endpointSelected.seuilMin.get();
+        this.seuilMax = this.endpointSelected.seuilMax.get();
+      }
     }
   }
 };

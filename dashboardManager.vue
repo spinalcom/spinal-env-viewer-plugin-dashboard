@@ -41,16 +41,6 @@ export default {
   },
   components: { endpointGlobalComponent, graphComponent },
   methods: {
-    getNodeItem: function(nodeI) {
-      nodeI.getElement().then(el => {
-        if (
-          el.constructor.name === "SpinalEndpoint" ||
-          el.constructor.name === "SpinalDevice"
-        ) {
-          this.severalEndpoints.push(nodeI);
-        }
-      });
-    },
     test: function() {
       console.log(this.deviceNodes);
     },
@@ -64,45 +54,51 @@ export default {
         _panel.setVisible(true);
       }
     },
+    changeDashBoardPanelTitle(name) {
+      if (globalType.spinal.panelManager.panelsGroup.dashboard[0].isVisible()) {
+        globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
+          "Dashboard : " + name
+        );
+      }
+    },
     getEvents: function() {
       var _self = this;
 
       EventBus.$on("nodeContext", el => {
-        if (el.context.name.get() != "logger") {
-          if (
-            globalType.spinal.panelManager.panelsGroup.dashboard[0].isVisible()
-          ) {
-            globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
-              "Dashboard : " + el.node.name.get()
-            );
-            _self.apppName = el.context.name.get();
-            _self.deviceNodes = el.node;
-          }
+        _self.appName = el.context.name.get();
+
+        if (_self.appName != "logger") {
+          _self.deviceNodes = el.node;
+          _self.severalEndpoints = null;
+          _self.logNodes = null;
         } else {
-          // _self.deviceNodes = null;
-          // _self.severalEndpoints = null;
-          // _self.logNodes = el.node;
-          console.log("logger");
+          _self.logNodes = el.node;
+          _self.deviceNodes = null;
+          _self.severalEndpoints = null;
         }
+
+        this.changeDashBoardPanelTitle(el.node.name.get());
         // _self.openClosePanel();
       });
 
       EventBus.$on("openDashboard", el => {
         _self.appName = el.context.name.get();
+
         if (_self.appName != "logger") {
           _self.deviceNodes = el.node;
-          globalType.spinal.panelManager.panelsGroup.dashboard[0].setTitle(
-            "Dashboard : " + el.node.name.get()
-          );
+          _self.severalEndpoints = null;
+          _self.logNodes = null;
         } else {
-          // _self.deviceNodes = null;
-          // _self.severalEndpoints = null;
-          // _self.logNodes = el.node;
-          console.log("logger");
+          _self.deviceNodes = null;
+          _self.severalEndpoints = null;
+          _self.logNodes = el.node;
         }
+
         _self.openClosePanel();
+        _self.changeDashBoardPanelTitle(el.node.name.get());
       });
 
+      /****** Bon */
       EventBus.$on("getNodeClick", el => {
         _self.bimObjectSelected = el;
       });
@@ -126,6 +122,16 @@ export default {
         }
       }, 500);
     },
+    getNodeItem: function(nodeI) {
+      nodeI.getElement().then(el => {
+        if (
+          el.constructor.name === "SpinalEndpoint" ||
+          el.constructor.name === "SpinalDevice"
+        ) {
+          this.severalEndpoints.push(nodeI);
+        }
+      });
+    },
     selectBimObject() {
       var _self = this;
 
@@ -141,7 +147,7 @@ export default {
 
           if (node.length > 1) {
             _self.deviceNodes = null;
-            // _self.logNodes = null;
+            _self.logNodes = null;
 
             _self.severalEndpoints = [];
             _self.appName = jeSuisAppNameJeSuisAModifier; //_self.apppName;
@@ -160,7 +166,7 @@ export default {
                 _self.appName = jeSuisAppNameJeSuisAModifier; //_self.apppName
                 _self.deviceNodes = t;
                 _self.severalEndpoints = null;
-                // _self.logNodes = null;
+                _self.logNodes = null;
               }
             });
           }

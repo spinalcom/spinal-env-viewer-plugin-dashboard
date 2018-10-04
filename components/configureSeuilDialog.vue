@@ -81,7 +81,7 @@ export default {
   },
   watch: {
     endpointSelected: function() {
-      if (this.endpointSelected.constructor.nale) {
+      if (this.endpointSelected.constructor.name == "SpinalEndpoint") {
         this.seuilMin = this.endpointSelected.seuilMin.get();
         this.seuilMax = this.endpointSelected.seuilMax.get();
       }

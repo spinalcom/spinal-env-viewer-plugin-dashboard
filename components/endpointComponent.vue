@@ -235,13 +235,14 @@ export default {
         (this.endpoint.min.active &&
           this.endpoint.currentValue <= this.endpoint.min.value)
       ) {
-        this.activeAlert();
+        // this.activeAlert();
         return true;
       }
 
       this.disableAlarm();
       return false;
     },
+
     activeAlert: function() {
       var allBimOjects = [];
 
@@ -302,13 +303,34 @@ export default {
         );
       }
 
+      this.clicks++;
+
       Promise.all(allBimOjects).then(el => {
         var x = [];
         for (var i = 0; i < el.length; i++) {
           x = x.concat(el[i]);
         }
 
-        viewer.fitToView(x);
+        var self = this;
+
+        if (this.clicks === 1) {
+          this.timer = setTimeout(function() {
+            viewer.setColorMaterial(x, "#FF4D3F", "1234");
+            self.clicks = 0;
+          }, this.delay);
+        } else if (this.clicks === 2) {
+          clearTimeout(this.timer);
+          // this.result.push("dblclick");
+          this.timer2 = setTimeout(function() {
+            self.clicks = 0;
+            viewer.restoreColorMaterial(x, "1234");
+          }, this.delay);
+        } else {
+          clearTimeout(this.timer2);
+          viewer.setColorMaterial(x, "#FF4D3F", "1234");
+          viewer.fitToView(x);
+          self.clicks = 0;
+        }
       });
     },
     configureSeuil: function() {

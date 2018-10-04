@@ -315,22 +315,30 @@ export default {
 
         if (this.clicks === 1) {
           this.timer = setTimeout(function() {
-            viewer.setColorMaterial(x, "#FF4D3F", "1234");
+            if (!this.alarmMode) {
+              viewer.setColorMaterial(x, "#FF4D3F", "1234");
+              this.alarmMode = true;
+            } else {
+              viewer.restoreColorMaterial(x, "1234");
+              this.alarmMode = false;
+            }
+
             self.clicks = 0;
           }, this.delay);
         } else if (this.clicks === 2) {
           clearTimeout(this.timer);
           // this.result.push("dblclick");
-          this.timer2 = setTimeout(function() {
-            self.clicks = 0;
-            viewer.restoreColorMaterial(x, "1234");
-          }, this.delay);
-        } else {
-          clearTimeout(this.timer2);
+          clearTimeout(this.timer);
           viewer.setColorMaterial(x, "#FF4D3F", "1234");
           viewer.fitToView(x);
+          this.alarmMode = true;
           self.clicks = 0;
-        }
+        } //else {
+        //   clearTimeout(this.timer2);
+        //   viewer.setColorMaterial(x, "#FF4D3F", "1234");
+        //   viewer.fitToView(x);
+        //   self.clicks = 0;
+        // }
       });
     },
     configureSeuil: function() {

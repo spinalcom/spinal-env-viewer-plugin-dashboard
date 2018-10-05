@@ -5,8 +5,46 @@ var GetInformation = class GetInformation extends Model {
 
 
 
+  verifyEndpointFormat(device) {
+    if (typeof device.seuilMin == "undefined") {
+      device.add_attr({
+        seuilMin: {
+          value: 0,
+          active: false
+        }
+      })
+    }
+
+    if (typeof device.seuilMax == "undefined") {
+      device.add_attr({
+        seuilMax: {
+          value: 0,
+          active: false
+        }
+      })
+    }
+
+    if (typeof device.alarmType == "undefined") {
+      device.add_attr({
+        alarmType: new Choice(1, ["min", "normal", "max"]),
+        oldAlarmType: "normal",
+      })
+    }
+
+    if (typeof device.currentLog == "undefined") {
+      device.add_attr({
+        currentLog: new Model()
+      })
+    }
+
+
+  }
+
 
   getDeviceDetail(device) {
+
+    this.verifyEndpointFormat(device)
+
     var deviceCopy = {};
 
     deviceCopy['id'] = device.id.get();
@@ -16,10 +54,18 @@ var GetInformation = class GetInformation extends Model {
     deviceCopy['path'] = device.path.get();
     // deviceCopy['type'] = device.type.get();
     deviceCopy['_server_id'] = device._server_id;
+
+
+
+
     deviceCopy['min'] = device.seuilMin.get();
     deviceCopy['max'] = device.seuilMax.get();
+
+
+
     deviceCopy['dataNature'] = device.dataNature.get();
-    deviceCopy['unit'] = (device.unit.get() && device.unit.get().trim().length >
+    deviceCopy['unit'] = (device.unit.get() && device.unit.get().trim()
+      .length >
       0 && device.unit.get() != "none") ? device.unit.get() : "-";
 
     // deviceCopy['type'] = typeof device.currentValue.get();

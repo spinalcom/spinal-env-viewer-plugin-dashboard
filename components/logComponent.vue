@@ -29,7 +29,7 @@
           <span title="Begin"
                 class="title">Begin :</span>
           <span class="value"
-                :title="formatDate(endpoint.end)">{{formatDate(endpoint.begin)}}</span>
+                :title="formatDate(endpoint.begin)">{{formatDate(endpoint.begin)}}</span>
         </div>
         <div class="date_item">
           <span title="End"
@@ -116,19 +116,41 @@ export default {
     },
     formatDate: function(date) {
       var t = new Date(date);
+
+      var date = t.getDate();
+      var month = t.getMonth() + 1;
+      var year = t.getFullYear();
+      var hour = t.getHours();
+      var minute = t.getMinutes();
+      var seconde = t.getSeconds();
+
       return (
-        t.getDate() +
+        ("0" + date).slice(-2) +
         "/" +
-        (t.getMonth() + 1) +
+        ("0" + month).slice(-2) +
         "/" +
-        t.getFullYear() +
+        year +
         " at " +
-        t.getHours() +
+        ("0" + hour).slice(-2) +
         ":" +
-        t.getMinutes() +
+        ("0" + minute).slice(-2) +
         ":" +
-        t.getSeconds()
+        ("0" + seconde).slice(-2)
       );
+
+      // return (
+      //   t.getDate() +
+      //   "/" +
+      //   (t.getMonth() + 1) +
+      //   "/" +
+      //   t.getFullYear() +
+      //   " at " +
+      //   t.getHours() +
+      //   ":" +
+      //   t.getMinutes() +
+      //   ":" +
+      //   t.getSeconds()
+      // );
     }
   },
   mounted() {

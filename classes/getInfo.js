@@ -89,8 +89,6 @@ var GetInformation = class GetInformation extends Model {
 
 
   getLogDetail(log) {
-
-    console.log("log", log);
     var logCopy = {};
 
     logCopy['id'] = log.id.get();

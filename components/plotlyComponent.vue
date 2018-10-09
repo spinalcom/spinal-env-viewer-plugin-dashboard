@@ -123,6 +123,36 @@ export default {
         graphPanel.setVisible(true);
       }
     },
+    verifyTimeSeries: function(timeSeries, callback) {
+      if (!timeSeries.historyDate) {
+        timeSeries.history.set(new Lst());
+        timeSeries.add_attr({
+          historyDate: new Lst()
+        });
+
+        timeSeries.history.push(0);
+        timeSeries.historyDate.push(this.getDate());
+      }
+
+      callback();
+    },
+
+    getDate: function() {
+      var t = new Date();
+      return (
+        t.getFullYear() +
+        "-" +
+        (t.getMonth() + 1) +
+        "-" +
+        t.getDate() +
+        " " +
+        t.getHours() +
+        ":" +
+        t.getMinutes() +
+        ":" +
+        t.getSeconds()
+      );
+    },
 
     getEvents: function() {
       globalType.spinal.eventBus.$on("seeGraphPanel", el => {
@@ -157,51 +187,65 @@ export default {
             .getNodeList2()[0]
             .getElement()
             .then(el2 => {
-              if (this.historyModel) this.historyModel.unbind(this.historyBind);
-              this.historyModel = el2.history;
-              this.historyBind = el2.history.bind(() => {
-                this.defineSeuil(
-                  this.endPointModel,
-                  el2.historyDate.get(),
-                  () => {
-                    this.updateGraph(el2.historyDate.get(), el2.history.get());
-                  }
-                );
-              });
+              this.verifyTimeSeries(el2, () => {
+                if (this.historyModel)
+                  this.historyModel.unbind(this.historyBind);
 
-              /**** Bind et unbind seuiMin */
-              if (this.seuilMinModel) {
-                this.seuilMinModel.unbind(this.seuilMinBind);
-              }
+                this.historyModel = el2.history;
+                console.log("el2", el2);
+                this.historyBind = el2.history.bind(() => {
+                  this.defineSeuil(
+                    this.endPointModel,
+                    el2.historyDate.get(),
+                    () => {
+                      this.updateGraph(
+                        el2.historyDate.get(),
+                        el2.history.get()
+                      );
+                    }
+                  );
+                });
 
-              this.seuilMinBind = this.endPointModel.seuilMin.bind(() => {
-                this.seuilMinModel = this.endPointModel.seuilMin;
+                /**** Bind et unbind seuiMin */
+                if (this.seuilMinModel) {
+                  this.seuilMinModel.unbind(this.seuilMinBind);
+                }
 
-                this.defineSeuil(
-                  this.endPointModel,
-                  el2.historyDate.get(),
-                  () => {
-                    this.updateGraph(el2.historyDate.get(), el2.history.get());
-                  }
-                );
-              });
-              /**** Fin Bind et unbind seuiMin */
+                this.seuilMinBind = this.endPointModel.seuilMin.bind(() => {
+                  this.seuilMinModel = this.endPointModel.seuilMin;
 
-              /**** Bind et unbind seuiMax */
-              if (this.seuilMaxModel) {
-                this.seuilMaxModel.unbind(this.seuilMaxBind);
-              }
+                  this.defineSeuil(
+                    this.endPointModel,
+                    el2.historyDate.get(),
+                    () => {
+                      this.updateGraph(
+                        el2.historyDate.get(),
+                        el2.history.get()
+                      );
+                    }
+                  );
+                });
+                /**** Fin Bind et unbind seuiMin */
 
-              this.seuilMaxBind = this.endPointModel.seuilMax.bind(() => {
-                this.seuilMaxModel = this.endPointModel.seuilMax;
+                /**** Bind et unbind seuiMax */
+                if (this.seuilMaxModel) {
+                  this.seuilMaxModel.unbind(this.seuilMaxBind);
+                }
 
-                this.defineSeuil(
-                  this.endPointModel,
-                  el2.historyDate.get(),
-                  () => {
-                    this.updateGraph(el2.historyDate.get(), el2.history.get());
-                  }
-                );
+                this.seuilMaxBind = this.endPointModel.seuilMax.bind(() => {
+                  this.seuilMaxModel = this.endPointModel.seuilMax;
+
+                  this.defineSeuil(
+                    this.endPointModel,
+                    el2.historyDate.get(),
+                    () => {
+                      this.updateGraph(
+                        el2.historyDate.get(),
+                        el2.history.get()
+                      );
+                    }
+                  );
+                });
               });
 
               /**** Fin Bind et unbind seuiMax */

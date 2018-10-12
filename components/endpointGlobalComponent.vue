@@ -35,7 +35,7 @@
                     style="min-height : 30px; height : 30px; padding-right: 10px; 
                 background: #356bab">
           <h3 class="md-title"
-              style="flex: 1">Others</h3>
+              style="flex: 1">Endpoints</h3>
           <md-button class="md-icon-button md-dense"
                      @click="showOrHideOther"
                      style="margin-right: 20px;">
@@ -82,6 +82,11 @@
                       :appName="appName"
                       :endpointSelected="endpointSelected"></endpoint-group>
 
+      <log-group v-if="hasLogs.length > 0"
+                 @selectEndpoint="selectEndpoint"
+                 :allLogs="hasLogs"
+                 :endpointSelected="endpointSelected"></log-group>
+
     </md-content>
   </md-content>
 </template>
@@ -93,12 +98,13 @@ var getInfo = require("../classes/getInfo.js");
 import endpointComponent from "./endpointComponent.vue";
 import logComponent from "./logComponent.vue";
 import endpointGroup from "./endpointGroupComponent.vue";
+import logGroup from "./logGroupComponent.vue";
 
 var getInfoInstance = new getInfo.GetInformation();
 
 export default {
   name: "endpointGlobalComponent",
-  components: { endpointComponent, logComponent, endpointGroup },
+  components: { endpointComponent, logComponent, endpointGroup, logGroup },
   props: [
     "deviceNode",
     "appName",
@@ -111,9 +117,10 @@ export default {
       endpoints: [],
       endPointsGroupNodes: [],
       showEndpoint: true,
-      itemCountPerLine: this.logNodes ? 2 : 3,
+      itemCountPerLine: 2,
       displayEndpoint: false,
-      displayLog: false
+      displayLog: false,
+      hasLogs: []
     };
   },
   methods: {
@@ -176,6 +183,12 @@ export default {
       if (typeof newDeviceNode != "undefined" && newDeviceNode != null) {
         this.displayEndpoint = true;
         this.displayLog = false;
+
+        this.hasLogs = _self.deviceNode.getChildrenByAppByRelation(
+          "logger",
+          "hasLog"
+        );
+
         this.deviceNode.getElement().then(m => {
           var type = m.constructor.name;
 

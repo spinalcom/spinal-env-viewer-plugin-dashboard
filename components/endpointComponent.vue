@@ -80,7 +80,7 @@ export default {
       chartData: null,
       chartOptions: null,
       mouseOver: false,
-      itemCount: 3,
+      itemCount: 2,
       alarmMode: false,
       delay: 500,
       clicks: 0,

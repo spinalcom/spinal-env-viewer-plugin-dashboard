@@ -8,7 +8,8 @@
       <h3 class="md-title"
           style="flex: 1">{{endPointGroupName}}</h3>
       <md-button class="md-icon-button md-dense"
-                 @click="showHideEndpoints">
+                 @click="showHideEndpoints"
+                 style="margin-right: 20px;">
         <md-icon v-if="!show">
           keyboard_arrow_down
         </md-icon>

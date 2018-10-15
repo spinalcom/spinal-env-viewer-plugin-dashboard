@@ -16,12 +16,13 @@
 </template>
 
 <script>
+var config = require("./config.js");
 const globalType = typeof window === "undefined" ? global : window;
 var spinalSystem;
 var viewer;
 var EventBus;
 var graph;
-var jeSuisAppNameJeSuisAModifier = "MyNetwork4";
+var appName = config.appName;
 
 import endpointGlobalComponent from "./components/endpointGlobalComponent.vue";
 import graphComponent from "./components/graphComponent.vue";
@@ -150,7 +151,7 @@ export default {
             _self.logNodes = null;
 
             _self.severalEndpoints = [];
-            _self.appName = jeSuisAppNameJeSuisAModifier; //_self.apppName;
+            _self.appName = appName; //_self.apppName;
 
             for (var i = 0; i < node.length; i++) {
               var x = node[i];
@@ -163,7 +164,7 @@ export default {
                 ele.constructor.name === "SpinalEndpoint" ||
                 ele.constructor.name === "SpinalDevice"
               ) {
-                _self.appName = jeSuisAppNameJeSuisAModifier; //_self.apppName
+                _self.appName = appName; //_self.apppName
                 _self.deviceNodes = t;
                 _self.severalEndpoints = null;
                 _self.logNodes = null;

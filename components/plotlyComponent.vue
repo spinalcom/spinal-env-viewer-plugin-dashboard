@@ -13,8 +13,10 @@
 
 <script>
 // require("../classes/plotly.min.js");
+var config = require("../config.js");
 const globalType = typeof window === "undefined" ? global : window;
-var appName = "MyNetwork4";
+var appName = config.appName;
+
 export default {
   name: "plotlyComponent",
   data() {
